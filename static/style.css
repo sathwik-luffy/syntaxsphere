@@ -1,0 +1,15 @@
+header{
+    /* make the header take up the full width and height of its container */
+    height: 100px;
+    width: 100%;
+    /* set the background color to a light gray */
+    background-color: #f0f0f0;
+    /* add some padding to the header */
+    padding: 20px;
+    /* use flexbox to align the items in the header */
+    display: flex;
+    /* align items horizontally in the center */
+    align-items: center;
+
+
+}

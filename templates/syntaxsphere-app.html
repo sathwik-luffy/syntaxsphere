@@ -1,0 +1,2673 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>SyntaxSphere — Code. Compete. Grow.</title>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Manrope:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;600;700&display=swap"
+    rel="stylesheet">
+  <style>
+    *,
+    *::before,
+    *::after {
+      box-sizing: border-box;
+      margin: 0;
+      padding: 0
+    }
+
+    :root {
+      --bg: #080d14;
+      --s1: #0d1520;
+      --s2: #111e2e;
+      --s3: #162333;
+      --border: #1e2f45;
+      --border2: #253a54;
+      --teal: #00e5c3;
+      --teal2: #00c8aa;
+      --teal-d: rgba(0, 229, 195, 0.08);
+      --teal-m: rgba(0, 229, 195, 0.15);
+      --blue: #3b9eff;
+      --blue-d: rgba(59, 158, 255, 0.08);
+      --violet: #9d6bff;
+      --violet-d: rgba(157, 107, 255, 0.08);
+      --orange: #ff8c42;
+      --orange-d: rgba(255, 140, 66, 0.1);
+      --red: #ff5e6a;
+      --red-d: rgba(255, 94, 106, 0.08);
+      --lime: #7ee83a;
+      --lime-d: rgba(126, 232, 58, 0.08);
+      --yellow: #ffd166;
+      --text: #c8d8ec;
+      --muted: #4a6380;
+      --muted2: #324d66;
+      --white: #e8f2ff;
+      --sans: 'Manrope', sans-serif;
+      --mono: 'JetBrains Mono', monospace;
+    }
+
+    html {
+      scroll-behavior: smooth
+    }
+
+    body {
+      background: var(--bg);
+      color: var(--text);
+      font-family: var(--sans);
+      min-height: 100vh;
+      display: flex;
+      flex-direction: column;
+      overflow-x: hidden
+    }
+
+    ::-webkit-scrollbar {
+      width: 5px;
+      height: 5px
+    }
+
+    ::-webkit-scrollbar-track {
+      background: var(--bg)
+    }
+
+    ::-webkit-scrollbar-thumb {
+      background: var(--border2);
+      border-radius: 3px
+    }
+
+    /* ─── LAYOUT ─────────────────── */
+    .app {
+      display: flex;
+      flex: 1;
+      height: calc(100vh - 56px)
+    }
+
+    .sidebar {
+      width: 220px;
+      flex-shrink: 0;
+      background: var(--s1);
+      border-right: 1px solid var(--border);
+      display: flex;
+      flex-direction: column;
+      padding: 16px 0;
+      position: sticky;
+      top: 56px;
+      height: calc(100vh - 56px);
+      overflow-y: auto
+    }
+
+    .main-content {
+      flex: 1;
+      overflow-y: auto
+    }
+
+    /* ─── TOP NAV ────────────────── */
+    header {
+      height: 56px;
+      background: rgba(8, 13, 20, 0.95);
+      backdrop-filter: blur(10px);
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      align-items: center;
+      padding: 0 20px;
+      gap: 16px;
+      position: sticky;
+      top: 0;
+      z-index: 300;
+    }
+
+    .logo {
+      display: flex;
+      align-items: center;
+      gap: 9px;
+      text-decoration: none;
+      flex-shrink: 0;
+      margin-right: 8px
+    }
+
+    .logo-mark {
+      width: 28px;
+      height: 28px;
+      border-radius: 7px;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: #080d14;
+    }
+
+    .logo-text {
+      font-size: 1rem;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.025em
+    }
+
+    .logo-text em {
+      color: var(--teal);
+      font-style: normal
+    }
+
+    .header-search {
+      flex: 1;
+      max-width: 340px;
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 0 12px;
+      height: 34px;
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      cursor: text;
+    }
+
+    .header-search input {
+      background: none;
+      border: none;
+      outline: none;
+      font-family: var(--sans);
+      font-size: 0.8rem;
+      color: var(--text);
+      flex: 1;
+    }
+
+    .header-search input::placeholder {
+      color: var(--muted)
+    }
+
+    .search-icon {
+      color: var(--muted);
+      font-size: 0.85rem
+    }
+
+    .header-right {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      margin-left: auto
+    }
+
+    .hpill {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--mono);
+      font-size: 0.66rem;
+      font-weight: 600;
+      padding: 4px 10px;
+      border-radius: 20px;
+      white-space: nowrap;
+    }
+
+    .hp-xp {
+      background: rgba(126, 232, 58, 0.1);
+      color: var(--lime);
+      border: 1px solid rgba(126, 232, 58, 0.2)
+    }
+
+    .hp-fire {
+      background: rgba(255, 140, 66, 0.1);
+      color: var(--orange);
+      border: 1px solid rgba(255, 140, 66, 0.2)
+    }
+
+    .avatar-btn {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--blue));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.75rem;
+      font-weight: 800;
+      color: #080d14;
+      cursor: pointer;
+      border: 2px solid var(--border);
+      transition: border-color 0.15s;
+    }
+
+    .avatar-btn:hover {
+      border-color: var(--teal)
+    }
+
+    .hbtn {
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      padding: 6px 14px;
+      border-radius: 7px;
+      transition: filter 0.15s, transform 0.1s;
+    }
+
+    .hbtn:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px)
+    }
+
+    .hbtn-teal {
+      background: var(--teal);
+      color: #080d14
+    }
+
+    .hbtn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border)
+    }
+
+    /* ─── SIDEBAR ────────────────── */
+    .sidebar-section {
+      padding: 0 10px 8px;
+      margin-bottom: 4px
+    }
+
+    .sidebar-label {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      letter-spacing: 0.12em;
+      text-transform: uppercase;
+      padding: 0 8px;
+      margin-bottom: 6px
+    }
+
+    .nav-item {
+      display: flex;
+      align-items: center;
+      gap: 10px;
+      padding: 8px 10px;
+      border-radius: 8px;
+      cursor: pointer;
+      transition: background 0.15s;
+      border: 1px solid transparent;
+      user-select: none;
+    }
+
+    .nav-item:hover {
+      background: var(--s2)
+    }
+
+    .nav-item.active {
+      background: var(--teal-d);
+      border-color: rgba(0, 229, 195, 0.15)
+    }
+
+    .nav-item.active .nav-icon {
+      color: var(--teal)
+    }
+
+    .nav-item.active .nav-label {
+      color: var(--white)
+    }
+
+    .nav-icon {
+      font-size: 0.95rem;
+      width: 18px;
+      text-align: center;
+      flex-shrink: 0
+    }
+
+    .nav-label {
+      font-size: 0.8rem;
+      font-weight: 600;
+      color: var(--text)
+    }
+
+    .nav-badge {
+      margin-left: auto;
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      background: var(--red);
+      color: #fff;
+      padding: 1px 6px;
+      border-radius: 10px
+    }
+
+    .sidebar-divider {
+      height: 1px;
+      background: var(--border);
+      margin: 8px 10px
+    }
+
+    .sidebar-footer {
+      padding: 12px 10px;
+      margin-top: auto;
+      border-top: 1px solid var(--border)
+    }
+
+    .user-mini {
+      display: flex;
+      align-items: center;
+      gap: 9px
+    }
+
+    .user-mini-av {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--violet));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.7rem;
+      font-weight: 800;
+      color: #080d14;
+      flex-shrink: 0
+    }
+
+    .user-mini-name {
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--white)
+    }
+
+    .user-mini-rank {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--muted)
+    }
+
+    .logout-btn {
+      margin-top: 10px;
+      cursor: pointer;
+      color: var(--red);
+      font-size: 0.75rem;
+      font-weight: 700;
+      transition: color 0.15s;
+    }
+
+    .logout-btn:hover {
+      color: #ff8a93;
+    }
+
+    /* ─── PAGES ──────────────────── */
+    .page {
+      display: none;
+      padding: 28px 32px;
+      animation: fadeIn 0.25s ease
+    }
+
+    .page.active {
+      display: block
+    }
+
+    @keyframes fadeIn {
+      from {
+        opacity: 0;
+        transform: translateY(8px)
+      }
+
+      to {
+        opacity: 1;
+        transform: none
+      }
+    }
+
+    /* ─── COMMON UI ──────────────── */
+    .page-title {
+      font-size: 1.35rem;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.02em;
+      margin-bottom: 4px
+    }
+
+    .page-sub {
+      font-size: 0.8rem;
+      color: var(--muted);
+      margin-bottom: 28px
+    }
+
+    .card {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px
+    }
+
+    .card-sm {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 14px 16px
+    }
+
+    .btn {
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      font-weight: 700;
+      border: none;
+      cursor: pointer;
+      padding: 7px 16px;
+      border-radius: 7px;
+      transition: filter 0.15s, transform 0.1s;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px
+    }
+
+    .btn:hover {
+      filter: brightness(1.1);
+      transform: translateY(-1px)
+    }
+
+    .btn-teal {
+      background: var(--teal);
+      color: #080d14
+    }
+
+    .btn-ghost {
+      background: transparent;
+      color: var(--text);
+      border: 1px solid var(--border)
+    }
+
+    .btn-blue {
+      background: var(--blue);
+      color: #fff
+    }
+
+    .btn-violet {
+      background: var(--violet);
+      color: #fff
+    }
+
+    .btn-sm {
+      padding: 5px 12px;
+      font-size: 0.72rem
+    }
+
+    .tag {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 2px 8px;
+      border-radius: 4px
+    }
+
+    .tag-easy {
+      background: var(--teal-d);
+      color: var(--teal)
+    }
+
+    .tag-med {
+      background: var(--orange-d);
+      color: var(--orange)
+    }
+
+    .tag-hard {
+      background: var(--red-d);
+      color: var(--red)
+    }
+
+    .tag-expert {
+      background: var(--violet-d);
+      color: var(--violet)
+    }
+
+    .grid2 {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 16px
+    }
+
+    .grid3 {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px
+    }
+
+    .grid4 {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px
+    }
+
+    /* ─── DASHBOARD ──────────────── */
+    .dash-hero {
+      background: linear-gradient(135deg, var(--s2) 0%, var(--s1) 100%);
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+      position: relative;
+      overflow: hidden;
+    }
+
+    .dash-hero::before {
+      content: '';
+      position: absolute;
+      right: -60px;
+      top: -60px;
+      width: 300px;
+      height: 300px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(0, 229, 195, 0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+
+    .dash-hero-left h2 {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.025em;
+      margin-bottom: 6px
+    }
+
+    .dash-hero-left p {
+      font-size: 0.85rem;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 480px;
+      margin-bottom: 20px
+    }
+
+    .dash-hero-btns {
+      display: flex;
+      gap: 10px
+    }
+
+    .streak-card {
+      background: var(--s3);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 16px 20px;
+      text-align: center;
+      flex-shrink: 0;
+      min-width: 130px;
+    }
+
+    .streak-num {
+      font-size: 2.4rem;
+      font-weight: 800;
+      color: var(--orange);
+      line-height: 1;
+      font-family: var(--mono)
+    }
+
+    .streak-lbl {
+      font-size: 0.7rem;
+      color: var(--muted);
+      margin-top: 4px;
+      font-weight: 600
+    }
+
+    .daily-goal-card {
+      background: var(--s2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 24px;
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 20px;
+    }
+
+    .dg-content {
+      flex: 1;
+    }
+
+    .dg-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 4px;
+    }
+
+    .dg-sub {
+      font-size: 0.75rem;
+      color: var(--muted);
+    }
+
+    .dg-progress-outer {
+      height: 8px;
+      background: var(--s3);
+      border-radius: 4px;
+      margin-top: 12px;
+      overflow: hidden;
+      max-width: 300px;
+    }
+
+    .dg-progress-inner {
+      height: 100%;
+      background: var(--teal);
+      border-radius: 4px;
+      transition: width 0.3s ease;
+    }
+
+    .streak-indicator {
+      display: none;
+    }
+
+    .streak-indicator.active {
+      display: flex !important;
+    }
+
+    .stat-cards {
+      display: grid;
+      grid-template-columns: repeat(4, 1fr);
+      gap: 14px;
+      margin-bottom: 24px
+    }
+
+    .stat-card {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 10px;
+      padding: 16px 18px
+    }
+
+    .stat-card-val {
+      font-size: 1.7rem;
+      font-weight: 800;
+      line-height: 1;
+      margin-bottom: 4px
+    }
+
+    .stat-card-lbl {
+      font-size: 0.72rem;
+      color: var(--muted);
+      font-weight: 600
+    }
+
+    .stat-card-sub {
+      font-family: var(--mono);
+      font-size: 0.63rem;
+      color: var(--muted2);
+      margin-top: 4px
+    }
+
+    .progress-ring-wrap {
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      margin-top: 8px
+    }
+
+    /* activity heatmap */
+    .heatmap {
+      display: grid;
+      grid-template-columns: repeat(26, 1fr);
+      gap: 3px;
+      margin-top: 8px
+    }
+
+    .heat-cell {
+      width: 100%;
+      aspect-ratio: 1;
+      border-radius: 2px;
+      background: var(--s3)
+    }
+
+    .h0 {
+      background: var(--s3)
+    }
+
+    .h1 {
+      background: rgba(0, 229, 195, 0.2)
+    }
+
+    .h2 {
+      background: rgba(0, 229, 195, 0.4)
+    }
+
+    .h3 {
+      background: rgba(0, 229, 195, 0.65)
+    }
+
+    .h4 {
+      background: var(--teal)
+    }
+
+    /* ─── CHALLENGES PAGE ────────── */
+    .filter-bar {
+      display: flex;
+      gap: 10px;
+      flex-wrap: wrap;
+      margin-bottom: 22px;
+      align-items: center
+    }
+
+    .filter-select {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 6px 12px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      outline: none;
+      cursor: pointer
+    }
+
+    .filter-select:focus {
+      border-color: var(--teal)
+    }
+
+    .search-bar {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 6px 12px;
+      color: var(--text);
+      font-family: var(--sans);
+      font-size: 0.78rem;
+      outline: none;
+      flex: 1;
+      max-width: 280px
+    }
+
+    .search-bar::placeholder {
+      color: var(--muted)
+    }
+
+    .filter-tabs {
+      display: flex;
+      gap: 4px;
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 8px;
+      padding: 3px
+    }
+
+    .filter-tab {
+      padding: 5px 13px;
+      border-radius: 6px;
+      font-size: 0.75rem;
+      font-weight: 700;
+      cursor: pointer;
+      color: var(--muted);
+      border: none;
+      background: none;
+      font-family: var(--sans);
+      transition: background 0.15s, color 0.15s
+    }
+
+    .filter-tab.active {
+      background: var(--s3);
+      color: var(--white)
+    }
+
+    .challenges-table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    .challenges-table th {
+      text-align: left;
+      padding: 10px 14px;
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .challenges-table td {
+      padding: 13px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      vertical-align: middle
+    }
+
+    .challenges-table tr:hover td {
+      background: var(--s2);
+      cursor: pointer
+    }
+
+    .ch-name-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .ch-icon-sm {
+      width: 32px;
+      height: 32px;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.88rem;
+      flex-shrink: 0
+    }
+
+    .ch-title-text {
+      font-size: 0.84rem;
+      font-weight: 700;
+      color: var(--white)
+    }
+
+    .ch-cats {
+      display: flex;
+      gap: 5px;
+      margin-top: 2px;
+      flex-wrap: wrap
+    }
+
+    .ch-cat {
+      font-family: var(--mono);
+      font-size: 0.58rem;
+      color: var(--muted);
+      background: var(--s3);
+      padding: 1px 6px;
+      border-radius: 3px
+    }
+
+    .solve-pct-bar {
+      width: 100px;
+      height: 5px;
+      background: var(--s3);
+      border-radius: 3px;
+      overflow: hidden
+    }
+
+    .solve-fill {
+      height: 100%;
+      background: var(--teal);
+      border-radius: 3px
+    }
+
+    .status-icon {
+      font-size: 0.9rem;
+      text-align: center
+    }
+
+    /* ─── CODE EDITOR PAGE ───────── */
+    .editor-layout {
+      display: grid;
+      grid-template-columns: 280px 1fr;
+      gap: 0;
+      height: calc(100vh - 56px - 56px);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      overflow: hidden
+    }
+
+    .problem-panel {
+      background: var(--s1);
+      border-right: 1px solid var(--border);
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column
+    }
+
+    .problem-header {
+      padding: 16px 18px;
+      border-bottom: 1px solid var(--border);
+      background: var(--s2)
+    }
+
+    .problem-title {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 6px
+    }
+
+    .problem-meta {
+      display: flex;
+      gap: 8px;
+      align-items: center;
+      flex-wrap: wrap
+    }
+
+    .problem-body {
+      padding: 16px 18px;
+      font-size: 0.8rem;
+      line-height: 1.7;
+      color: var(--text);
+      flex: 1
+    }
+
+    .problem-body h4 {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--white);
+      margin: 14px 0 6px
+    }
+
+    .problem-body pre {
+      background: var(--s3);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 10px;
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      color: var(--teal);
+      overflow-x: auto;
+      margin: 8px 0
+    }
+
+    .editor-panel {
+      display: flex;
+      flex-direction: column;
+      background: var(--bg)
+    }
+
+    .editor-topbar {
+      background: var(--s2);
+      border-bottom: 1px solid var(--border);
+      padding: 0 16px;
+      height: 44px;
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .lang-select {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 6px;
+      padding: 5px 10px;
+      color: var(--text);
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      outline: none;
+      cursor: pointer
+    }
+
+    .editor-actions {
+      display: flex;
+      gap: 8px;
+      margin-left: auto
+    }
+
+    .code-area {
+      flex: 1;
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      line-height: 1.65;
+      padding: 16px;
+      background: transparent;
+      color: #a8c5e8;
+      border: none;
+      outline: none;
+      resize: none;
+      width: 100%
+    }
+
+    .editor-bottom {
+      background: var(--s2);
+      border-top: 1px solid var(--border)
+    }
+
+    .output-tabs {
+      display: flex;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .output-tab {
+      padding: 8px 16px;
+      font-size: 0.74rem;
+      font-weight: 600;
+      cursor: pointer;
+      color: var(--muted);
+      border-bottom: 2px solid transparent;
+      transition: color 0.15s, border-color 0.15s;
+      background: none;
+      border-top: none;
+      border-left: none;
+      border-right: none;
+      font-family: var(--sans)
+    }
+
+    .output-tab.active {
+      color: var(--teal);
+      border-bottom-color: var(--teal)
+    }
+
+    .output-body {
+      padding: 14px 16px;
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      color: var(--text);
+      min-height: 110px;
+      max-height: 160px;
+      overflow-y: auto
+    }
+
+    .output-success {
+      color: var(--teal)
+    }
+
+    .output-error {
+      color: var(--red)
+    }
+
+    .output-line {
+      margin-bottom: 3px
+    }
+
+    /* test cases */
+    .test-cases {
+      display: flex;
+      gap: 8px;
+      padding: 10px 16px;
+      border-bottom: 1px solid var(--border);
+      flex-wrap: wrap
+    }
+
+    .tc {
+      padding: 4px 12px;
+      border-radius: 5px;
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      font-weight: 700;
+      cursor: pointer;
+      border: 1px solid var(--border);
+      background: var(--s1);
+      color: var(--muted);
+      transition: all 0.15s
+    }
+
+    .tc.pass {
+      background: var(--teal-d);
+      border-color: rgba(0, 229, 195, 0.25);
+      color: var(--teal)
+    }
+
+    .tc.fail {
+      background: var(--red-d);
+      border-color: rgba(255, 94, 106, 0.25);
+      color: var(--red)
+    }
+
+    .tc.run {
+      background: var(--orange-d);
+      border-color: rgba(255, 140, 66, 0.25);
+      color: var(--orange)
+    }
+
+    /* ─── LEADERBOARD ────────────── */
+    .lb-header-row {
+      display: grid;
+      grid-template-columns: 1fr 360px;
+      gap: 24px;
+      margin-bottom: 24px;
+      align-items: start
+    }
+
+    .lb-trophy {
+      display: flex;
+      gap: 14px
+    }
+
+    .trophy-card {
+      flex: 1;
+      border-radius: 12px;
+      padding: 18px;
+      border: 1px solid;
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .tc-1 {
+      background: rgba(255, 215, 0, 0.06);
+      border-color: rgba(255, 215, 0, 0.2)
+    }
+
+    .tc-2 {
+      background: rgba(192, 192, 192, 0.06);
+      border-color: rgba(192, 192, 192, 0.15)
+    }
+
+    .tc-3 {
+      background: rgba(205, 127, 50, 0.06);
+      border-color: rgba(205, 127, 50, 0.2)
+    }
+
+    .trophy-medal {
+      font-size: 1.6rem
+    }
+
+    .trophy-info-name {
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--white)
+    }
+
+    .trophy-info-score {
+      font-family: var(--mono);
+      font-size: 0.72rem;
+      margin-top: 2px
+    }
+
+    .t1-score {
+      color: #ffd700
+    }
+
+    .t2-score {
+      color: #aab4c8
+    }
+
+    .t3-score {
+      color: #cd7f32
+    }
+
+    .lb-filters {
+      display: flex;
+      gap: 8px;
+      margin-bottom: 18px;
+      flex-wrap: wrap
+    }
+
+    .lb-table {
+      width: 100%;
+      border-collapse: collapse
+    }
+
+    .lb-table th {
+      text-align: left;
+      padding: 10px 14px;
+      font-family: var(--mono);
+      font-size: 0.61rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      text-transform: uppercase;
+      border-bottom: 1px solid var(--border)
+    }
+
+    .lb-table td {
+      padding: 12px 14px;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+      vertical-align: middle
+    }
+
+    .lb-table tr:hover td {
+      background: var(--s2)
+    }
+
+    .lb-table tr.me td {
+      background: rgba(0, 229, 195, 0.04)
+    }
+
+    .rank-cell {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      font-weight: 700;
+      color: var(--muted);
+      width: 44px
+    }
+
+    .rank-1 {
+      color: #ffd700
+    }
+
+    .rank-2 {
+      color: #aab4c8
+    }
+
+    .rank-3 {
+      color: #cd7f32
+    }
+
+    .user-cell {
+      display: flex;
+      align-items: center;
+      gap: 10px
+    }
+
+    .u-av {
+      width: 32px;
+      height: 32px;
+      border-radius: 50%;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 0.72rem;
+      font-weight: 800;
+      flex-shrink: 0
+    }
+
+    .u-name {
+      font-size: 0.83rem;
+      font-weight: 700;
+      color: var(--white)
+    }
+
+    .u-handle {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--muted);
+      margin-top: 1px
+    }
+
+    .score-cell {
+      font-family: var(--mono);
+      font-size: 0.82rem;
+      font-weight: 700;
+      color: var(--teal);
+      text-align: right
+    }
+
+    .solved-cell {
+      font-family: var(--mono);
+      font-size: 0.76rem;
+      color: var(--muted)
+    }
+
+    .bar100 {
+      width: 80px;
+      height: 4px;
+      background: var(--s3);
+      border-radius: 2px;
+      overflow: hidden
+    }
+
+    .bar-fill {
+      height: 100%;
+      border-radius: 2px
+    }
+
+    /* ─── PROFILE ────────────────── */
+    .profile-hero {
+      background: linear-gradient(135deg, var(--s2), var(--s1));
+      border: 1px solid var(--border);
+      border-radius: 14px;
+      padding: 28px 32px;
+      margin-bottom: 24px;
+      display: flex;
+      gap: 24px;
+      align-items: center;
+      position: relative;
+      overflow: hidden
+    }
+
+    .profile-hero::after {
+      content: '';
+      position: absolute;
+      right: -40px;
+      top: -40px;
+      width: 250px;
+      height: 250px;
+      border-radius: 50%;
+      background: radial-gradient(circle, rgba(157, 107, 255, 0.07) 0%, transparent 70%);
+      pointer-events: none
+    }
+
+    .profile-av {
+      width: 78px;
+      height: 78px;
+      border-radius: 50%;
+      background: linear-gradient(135deg, var(--teal), var(--violet));
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.6rem;
+      font-weight: 800;
+      color: #080d14;
+      flex-shrink: 0;
+      border: 3px solid var(--border2)
+    }
+
+    .profile-name {
+      font-size: 1.5rem;
+      font-weight: 800;
+      color: var(--white);
+      letter-spacing: -0.025em
+    }
+
+    .profile-handle {
+      font-family: var(--mono);
+      font-size: 0.78rem;
+      color: var(--muted);
+      margin-bottom: 12px
+    }
+
+    .profile-tags {
+      display: flex;
+      gap: 7px;
+      flex-wrap: wrap;
+      margin-bottom: 14px
+    }
+
+    .profile-bio {
+      font-size: 0.82rem;
+      color: var(--muted);
+      line-height: 1.6;
+      max-width: 500px
+    }
+
+    .profile-actions {
+      margin-left: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 8px;
+      align-items: flex-end;
+      flex-shrink: 0
+    }
+
+    .badges-row {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-bottom: 6px
+    }
+
+    .badge-chip {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      background: var(--s3);
+      border: 1px solid var(--border);
+      border-radius: 7px;
+      padding: 6px 11px;
+      font-size: 0.73rem;
+      font-weight: 700;
+      color: var(--text)
+    }
+
+    .badge-chip span {
+      font-size: 0.9rem
+    }
+
+    .skill-grid {
+      display: flex;
+      flex-direction: column;
+      gap: 10px
+    }
+
+    .sk {
+      display: flex;
+      align-items: center;
+      gap: 12px
+    }
+
+    .sk-name {
+      font-size: 0.78rem;
+      font-weight: 600;
+      width: 120px;
+      flex-shrink: 0
+    }
+
+    .sk-track {
+      flex: 1;
+      height: 7px;
+      background: var(--s3);
+      border-radius: 4px;
+      overflow: hidden
+    }
+
+    .sk-fill {
+      height: 100%;
+      border-radius: 4px
+    }
+
+    .sk-pct {
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      color: var(--muted);
+      width: 36px;
+      text-align: right
+    }
+
+    /* ─── LEARN PAGE ─────────────── */
+    .tracks-grid {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 16px
+    }
+
+    .track-card {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 20px;
+      cursor: pointer;
+      transition: border-color 0.18s, transform 0.12s
+    }
+
+    .track-card:hover {
+      border-color: var(--teal);
+      transform: translateY(-2px)
+    }
+
+    .track-top {
+      display: flex;
+      justify-content: space-between;
+      align-items: flex-start;
+      margin-bottom: 12px
+    }
+
+    .track-icon {
+      width: 42px;
+      height: 42px;
+      border-radius: 10px;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-size: 1.1rem
+    }
+
+    .track-badge {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      font-weight: 700;
+      padding: 3px 8px;
+      border-radius: 4px
+    }
+
+    .tb-pop {
+      background: var(--orange-d);
+      color: var(--orange)
+    }
+
+    .tb-new {
+      background: var(--violet-d);
+      color: var(--violet)
+    }
+
+    .tb-hot {
+      background: var(--red-d);
+      color: var(--red)
+    }
+
+    .tb-free {
+      background: var(--teal-d);
+      color: var(--teal)
+    }
+
+    .track-title {
+      font-size: 0.9rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 5px
+    }
+
+    .track-desc {
+      font-size: 0.75rem;
+      color: var(--muted);
+      line-height: 1.55;
+      margin-bottom: 14px
+    }
+
+    .track-foot {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      padding-top: 12px;
+      border-top: 1px solid var(--border)
+    }
+
+    .track-meta {
+      font-family: var(--mono);
+      font-size: 0.62rem;
+      color: var(--muted);
+      display: flex;
+      gap: 12px
+    }
+
+    .track-prog {
+      font-family: var(--mono);
+      font-size: 0.67rem;
+      color: var(--teal);
+      font-weight: 700
+    }
+
+    /* ─── CONTEST PAGE ───────────── */
+    .contest-card {
+      background: var(--s1);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      padding: 22px;
+      margin-bottom: 14px;
+      display: flex;
+      align-items: center;
+      gap: 20px;
+      cursor: pointer;
+      transition: border-color 0.18s
+    }
+
+    .contest-card:hover {
+      border-color: var(--teal)
+    }
+
+    .contest-time {
+      background: var(--s3);
+      border: 1px solid var(--border2);
+      border-radius: 10px;
+      padding: 14px 18px;
+      text-align: center;
+      flex-shrink: 0;
+      min-width: 100px
+    }
+
+    .ct-num {
+      font-family: var(--mono);
+      font-size: 1.3rem;
+      font-weight: 700;
+      color: var(--white);
+      line-height: 1
+    }
+
+    .ct-unit {
+      font-family: var(--mono);
+      font-size: 0.6rem;
+      color: var(--muted);
+      letter-spacing: 0.08em;
+      margin-top: 2px
+    }
+
+    .contest-info {
+      flex: 1
+    }
+
+    .contest-name {
+      font-size: 0.95rem;
+      font-weight: 800;
+      color: var(--white);
+      margin-bottom: 5px
+    }
+
+    .contest-meta {
+      display: flex;
+      gap: 14px;
+      flex-wrap: wrap;
+      font-family: var(--mono);
+      font-size: 0.65rem;
+      color: var(--muted)
+    }
+
+    .contest-right {
+      display: flex;
+      flex-direction: column;
+      align-items: flex-end;
+      gap: 8px
+    }
+
+    .contest-prize {
+      font-family: var(--mono);
+      font-size: 0.8rem;
+      font-weight: 700;
+      color: var(--yellow)
+    }
+
+    .c-live {
+      display: flex;
+      align-items: center;
+      gap: 5px;
+      font-family: var(--mono);
+      font-size: 0.63rem;
+      color: var(--teal);
+      font-weight: 700
+    }
+
+    .live-dot {
+      width: 6px;
+      height: 6px;
+      border-radius: 50%;
+      background: var(--teal);
+      animation: pulse 1.5s ease-in-out infinite
+    }
+
+    @keyframes pulse {
+
+      0%,
+      100% {
+        opacity: 1
+      }
+
+      50% {
+        opacity: 0.3
+      }
+    }
+
+    /* ─── RESPONSIVE ─────────────── */
+    @media(max-width:900px) {
+      .sidebar {
+        display: none
+      }
+
+      .grid3,
+      .grid4,
+      .tracks-grid,
+      .stat-cards {
+        grid-template-columns: 1fr 1fr
+      }
+
+      .editor-layout {
+        grid-template-columns: 1fr;
+        height: auto
+      }
+
+      .problem-panel {
+        max-height: 300px
+      }
+
+      .lb-header-row {
+        grid-template-columns: 1fr
+      }
+    }
+  </style>
+</head>
+
+<body>
+
+  <!-- ── TOP NAV ─────────────────────────────────────── -->
+  <header>
+    <a class="logo" href="/">
+      <div class="logo-mark">&lt;/&gt;</div>
+      <div class="logo-text">Syntax<em>Sphere</em></div>
+    </a>
+    <div class="header-search">
+      <span class="search-icon">⌕</span>
+      <input type="text" placeholder="Search challenges, tracks, users...">
+    </div>
+    <div class="header-right">
+      <div class="hpill hp-xp">⚡ <span id="navXP">50</span> XP</div>
+      <div class="hpill hp-fire streak-indicator">🔥 <span id="navStreak">22</span></div>
+      <button class="hbtn hbtn-ghost" onclick="navigate('profile')">Profile</button>
+      <div class="avatar-btn" onclick="navigate('profile')">YO</div>
+    </div>
+  </header>
+
+  <div class="app">
+
+    <!-- ── SIDEBAR ──────────────────────────────────────── -->
+    <nav class="sidebar">
+      <div class="sidebar-section">
+        <div class="sidebar-label">Main</div>
+        <div class="nav-item active" onclick="navigate('dashboard')">
+          <span class="nav-icon">⬛</span>
+          <span class="nav-label">Dashboard</span>
+        </div>
+        <div class="nav-item" onclick="navigate('learn')">
+          <span class="nav-icon">📚</span>
+          <span class="nav-label">Learn</span>
+        </div>
+        <div class="nav-item" onclick="navigate('challenges')">
+          <span class="nav-icon">⚡</span>
+          <span class="nav-label">Challenges</span>
+          <span class="nav-badge">3</span>
+        </div>
+        <div class="nav-item" onclick="navigate('editor')">
+          <span class="nav-icon">✏️</span>
+          <span class="nav-label">Code Editor</span>
+        </div>
+        <div class="nav-item" onclick="navigate('contests')">
+          <span class="nav-icon">🏆</span>
+          <span class="nav-label">Contests</span>
+        </div>
+        <div class="nav-item" onclick="navigate('leaderboard')">
+          <span class="nav-icon">📊</span>
+          <span class="nav-label">Leaderboard</span>
+        </div>
+        <a href="https://www.interviewbit.com/peer-mock-interview/" style="text-decoration: none; color: inherit;"></a>
+        <div class="nav-item">
+          <span class="nav-icon">🧑‍💼</span>
+          <span class="nav-label">Mock Interview</span>
+        </div>
+      </div>
+      <div class="sidebar-divider"></div>
+      <div class="sidebar-section">
+        <div class="sidebar-label">Account</div>
+        <div class="nav-item" onclick="navigate('profile')">
+          <span class="nav-icon">👤</span>
+          <span class="nav-label">My Profile</span>
+        </div>
+        <div class="nav-item">
+          <span class="nav-icon">⚙️</span>
+          <span class="nav-label">Settings</span>
+        </div>
+      </div>
+      <div class="sidebar-footer">
+        <div class="user-mini">
+          <div class="user-mini-av"></div>
+          <div>
+            <div class="user-mini-name"></div>
+            <div class="user-mini-rank">Rank #1,204 · Gold</div>
+            <div class="logout-btn" onclick="logout()">Log Out</div>
+          </div>
+        </div>
+      </div>
+    </nav>
+
+    <!-- ── MAIN CONTENT ──────────────────────────────────── -->
+    <div class="main-content">
+
+      <!-- ════ DASHBOARD ════════════════════════════════════ -->
+      <div class="page active" id="page-dashboard">
+        <div style="padding:28px 32px">
+
+          <div class="daily-goal-card" id="dailyGoalCard">
+            <div class="dg-content">
+              <div class="dg-title">🎯 Daily Goal: Solve 1 Problem</div>
+              <div class="dg-sub" id="dgSub">Complete a challenge to maintain your streak!</div>
+              <div class="dg-progress-outer">
+                <div class="dg-progress-inner" id="dgProgress" style="width: 0%"></div>
+              </div>
+            </div>
+            <div class="dg-status" id="dgStatus">
+              <span class="tag tag-med">In Progress</span>
+            </div>
+          </div>
+
+          <div class="dash-hero streak-indicator">
+            <div class="dash-hero-left">
+              <h2>Welcome back, Developer 👋</h2>
+              <p>You're on a 22-day streak! Keep it going — you're in the top 8% of all users this week.</p>
+              <div class="dash-hero-btns">
+                <button class="btn btn-teal" onclick="navigate('challenges')">Continue Practicing</button>
+                <button class="btn btn-ghost" onclick="navigate('contests')">Join a Contest</button>
+              </div>
+            </div>
+            <div class="streak-card">
+              <div class="streak-num">22</div>
+              <div class="streak-lbl">🔥 Day Streak</div>
+            </div>
+          </div>
+
+          <div class="stat-cards">
+            <div class="stat-card">
+              <div class="stat-card-val" style="color:var(--teal)">247</div>
+              <div class="stat-card-lbl">Problems Solved</div>
+              <div class="stat-card-sub">↑ 14 this week</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-val" style="color:var(--violet)" id="statXP">50</div>
+              <div class="stat-card-lbl">Total XP</div>
+              <div class="stat-card-sub">Level 1 · Beginner</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-val" style="color:var(--blue)">#1,204</div>
+              <div class="stat-card-lbl">Global Rank</div>
+              <div class="stat-card-sub">↑ 312 positions</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-val" style="color:var(--orange)">87%</div>
+              <div class="stat-card-lbl">Acceptance Rate</div>
+              <div class="stat-card-sub">Top 12% overall</div>
+            </div>
+          </div>
+
+          <div class="grid2" style="margin-bottom:20px">
+            <div class="card">
+              <div style="font-size:0.82rem;font-weight:800;color:var(--white);margin-bottom:16px">📈 Activity — Last 6
+                Months</div>
+              <div class="heatmap" id="heatmap"></div>
+              <div style="display:flex;gap:6px;align-items:center;margin-top:10px">
+                <span style="font-family:var(--mono);font-size:0.6rem;color:var(--muted)">Less</span>
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--s3)"></div>
+                <div style="width:10px;height:10px;border-radius:2px" class="h1"></div>
+                <div style="width:10px;height:10px;border-radius:2px" class="h2"></div>
+                <div style="width:10px;height:10px;border-radius:2px" class="h3"></div>
+                <div style="width:10px;height:10px;border-radius:2px;background:var(--teal)"></div>
+                <span style="font-family:var(--mono);font-size:0.6rem;color:var(--muted)">More</span>
+              </div>
+            </div>
+            <div class="card">
+              <div style="font-size:0.82rem;font-weight:800;color:var(--white);margin-bottom:16px">🎯 Skill Breakdown
+              </div>
+              <div class="skill-grid">
+
+                <div class="sk"><span class="sk-name">Algorithms</span>
+                  <div class="sk-track">
+                    <div class="sk-fill" style="width:78%;background:var(--teal)"></div>
+                  </div><span class="sk-pct">78%</span>
+                </div>
+                <div class="sk"><span class="sk-name">Data Structures</span>
+                  <div class="sk-track">
+                    <div class="sk-fill" style="width:65%;background:var(--blue)"></div>
+                  </div><span class="sk-pct">65%</span>
+                </div>
+                <div class="sk"><span class="sk-name">System Design</span>
+                  <div class="sk-track">
+                    <div class="sk-fill" style="width:42%;background:var(--violet)"></div>
+                  </div><span class="sk-pct">42%</span>
+                </div>
+                <div class="sk"><span class="sk-name">SQL</span>
+                  <div class="sk-track">
+                    <div class="sk-fill" style="width:88%;background:var(--teal)"></div>
+                  </div><span class="sk-pct">88%</span>
+                </div>
+                <div class="sk"><span class="sk-name">Debugging</span>
+                  <div class="sk-track">
+                    <div class="sk-fill" style="width:71%;background:var(--orange)"></div>
+                  </div><span class="sk-pct">71%</span>
+                </div>
+                <div class="sk"><span class="sk-name">Security</span>
+                  <div class="sk-track">
+                    <div class="sk-fill" style="width:35%;background:var(--red)"></div>
+                  </div><span class="sk-pct">35%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="display:flex;justify-content:space-between;align-items:center;margin-bottom:16px">
+              <div style="font-size:0.82rem;font-weight:800;color:var(--white)">⚡ Recommended Challenges</div>
+              <button class="btn btn-ghost btn-sm" onclick="navigate('challenges')">View all</button>
+            </div>
+            <div style="display:flex;flex-direction:column;gap:8px" id="dashChallenges"></div>
+          </div>
+
+        </div>
+      </div>
+
+      <!-- ════ LEARN ════════════════════════════════════════ -->
+      <div class="page" id="page-learn">
+        <div style="padding:28px 32px">
+          <div class="page-title">Learning Tracks</div>
+          <div class="page-sub">Structured paths from beginner to expert</div>
+
+          <!-- TRACKS FROM SYNTAX-SPHERE -->
+          <section class="tracks" id="tracks" style="margin-bottom: 2rem;">
+            <div class="tracks-header" style="margin-bottom: 2rem;">
+              <h2 class="section-title" style="font-size: 1.5rem; margin-bottom: 0.5rem;">Choose Your Domain</h2>
+              <p class="section-sub">From algorithms to system design — structured paths to master every area.</p>
+            </div>
+            <div class="tracks-grid">
+              <a href="/companies" style="text-decoration: none; color: inherit;">
+                <div class="track-card" style="--track-color:#00e5a0; background: var(--s2);">
+                  <div class="track-icon">⚡</div>
+                  <div class="track-name">Top interview questions</div>
+                  <div class="track-count">2,340 challenges</div>
+                  <span class="track-tag" style="background: rgba(0, 229, 160, .15); color: var(--teal);">Most
+                    Popular</span>
+                </div>
+              </a>
+              <a href="/data-structures" style="text-decoration: none; color: inherit;">
+                <div class="track-card" style="--track-color: #3b82f6; background: var(--s2);">
+                  <div class="track-icon">🗄️</div>
+                  <div class="track-name">Data Structures</div>
+                  <div class="track-count">1,820 challenges</div>
+                  <span class="track-tag" style="background: rgba(59, 130, 246, .15); color: var(--blue);">Core
+                    Skill</span>
+                </div>
+              </a>
+              <div class="track-card" style="--track-color:#f59e0b; background: var(--s2);">
+                <div class="track-icon">🐍</div>
+                <div class="track-name">Python</div>
+                <div class="track-count">980 challenges</div>
+                <span class="track-tag" style="background: rgba(245, 158, 11, .15); color: #f59e0b;">Beginner
+                  Friendly</span>
+              </div>
+              <a href="syntax-sphere (1).html" style="text-decoration: none; color: inherit;">
+                <div class="track-card" style="--track-color:#8b5cf6; background: var(--s2);">
+                  <div class="track-icon">🗃️</div>
+                  <div class="track-name">SQL</div>
+                  <div class="track-count">760 challenges</div>
+                  <span class="track-tag" style="background: rgba(139, 92, 246, .15); color: #8b5cf6;">In Demand</span>
+                </div>
+              </a>
+              <div class="track-card" style="--track-color:#ef4444; background: var(--s2);">
+                <div class="track-icon">🎯</div>
+                <div class="track-name">Top interview questions</div>
+                <div class="track-count">540 challenges</div>
+                <span class="track-tag" style="background: rgba(239, 68, 68, .15); color: var(--red);">Hot 🔥</span>
+              </div>
+              <div class="track-card" style="--track-color:#06b6d4; background: var(--s2);">
+                <div class="track-icon">🌐</div>
+                <div class="track-name">JavaScript</div>
+                <div class="track-count">1,140 challenges</div>
+                <span class="track-tag" style="background: rgba(6, 182, 212, .15); color: #06b6d4;">Web Dev</span>
+              </div>
+              <div class="track-card" style="--track-color:#f97316; background: var(--s2);">
+                <div class="track-icon">☕</div>
+                <div class="track-name">Java</div>
+                <div class="track-count">870 challenges</div>
+                <span class="track-tag"
+                  style="background: rgba(249, 115, 22, .15); color: var(--orange);">Enterprise</span>
+              </div>
+              <a href="https://www.interviewbit.com/peer-mock-interview/"
+                style="text-decoration: none; color: inherit;">
+                <div class="track-card" style="--track-color:#a78bfa; background: var(--s2);">
+                  <div class="track-icon">🧑‍💼</div>
+                  <div class="track-name">Mock interview</div>
+                  <div class="track-count">420 challenges</div>
+                  <span class="track-tag"
+                    style="background: rgba(167, 139, 250, .15); color: #a78bfa;">Competitive</span>
+                </div>
+              </a>
+            </div>
+          </section>
+
+          <!-- ORIGINAL LEARN CONTENT -->
+          <div style="margin-top: 3rem;">
+            <h2 class="section-title" style="font-size: 1.5rem; margin-bottom: 0.5rem; margin-top: 2rem;">Comprehensive
+              Courses</h2>
+            <p class="section-sub" style="margin-bottom: 1rem;">Deep-dive into specific technologies and level up your
+              career.</p>
+          </div>
+          <div class="filter-bar">
+            <div class="filter-tabs">
+              <button class="filter-tab active" onclick="setFTab(this)">All</button>
+              <button class="filter-tab" onclick="setFTab(this)">In Progress</button>
+              <button class="filter-tab" onclick="setFTab(this)">Completed</button>
+              <button class="filter-tab" onclick="setFTab(this)">New</button>
+            </div>
+            <select class="filter-select">
+              <option>All Levels</option>
+              <option>Beginner</option>
+              <option>Intermediate</option>
+              <option>Advanced</option>
+            </select>
+          </div>
+          <div class="tracks-grid" id="tracksGrid"></div>
+        </div>
+      </div>
+
+      <!-- ════ CHALLENGES ══════════════════════════════════ -->
+      <div class="page" id="page-challenges">
+        <div style="padding:28px 32px">
+          <div class="page-title">Practice Challenges</div>
+          <div class="page-sub">Solve real-world coding problems and climb the ranks</div>
+          <div class="filter-bar">
+            <input type="text" class="search-bar" placeholder="Search challenges...">
+            <select class="filter-select" onchange="filterChallenges(this.value)">
+              <option value="all">All Difficulty</option>
+              <option value="Easy">Easy</option>
+              <option value="Medium">Medium</option>
+              <option value="Hard">Hard</option>
+              <option value="Expert">Expert</option>
+            </select>
+            <select class="filter-select">
+              <option>All Topics</option>
+              <option>Algorithms</option>
+              <option>Data Structures</option>
+              <option>SQL</option>
+              <option>System Design</option>
+            </select>
+            <select class="filter-select">
+              <option>Sort: Popularity</option>
+              <option>Sort: Newest</option>
+              <option>Sort: Difficulty</option>
+            </select>
+          </div>
+          <div class="card" style="padding:0">
+            <table class="challenges-table" id="challengesTable">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Challenge</th>
+                  <th>Difficulty</th>
+                  <th>Acceptance</th>
+                  <th>XP</th>
+                  <th>Action</th>
+                </tr>
+              </thead>
+              <tbody id="challengesTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ CODE EDITOR ════════════════════════════════ -->
+      <div class="page" id="page-editor">
+        <div style="padding:16px 20px 8px">
+          <div class="page-title">Code Editor</div>
+          <div class="page-sub">Solve: Two Sum — Array · Easy</div>
+        </div>
+        <div style="padding:0 20px 20px">
+          <div class="editor-layout">
+            <div class="problem-panel">
+              <div class="problem-header">
+                <div class="problem-title">Two Sum</div>
+                <div class="problem-meta">
+                  <span class="tag tag-easy">Easy</span>
+                  <span style="font-family:var(--mono);font-size:0.62rem;color:var(--muted)">👥 84.2k solved</span>
+                  <span style="font-family:var(--mono);font-size:0.62rem;color:var(--teal)">⚡ +80 XP</span>
+                </div>
+              </div>
+              <div class="problem-body">
+                <p>Given an array of integers <code
+                    style="background:var(--s3);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:0.78rem;color:var(--teal)">nums</code>
+                  and an integer <code
+                    style="background:var(--s3);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:0.78rem;color:var(--teal)">target</code>,
+                  return <em style="color:var(--white)">indices</em> of the two numbers such that they add up to <code
+                    style="background:var(--s3);padding:1px 5px;border-radius:3px;font-family:var(--mono);font-size:0.78rem;color:var(--teal)">target</code>.
+                </p>
+                <p style="margin-top:10px">You may assume that each input would have <strong
+                    style="color:var(--white)">exactly one solution</strong>, and you may not use the same element
+                  twice.</p>
+                <h4>Examples</h4>
+                <pre>Input:  nums = [2,7,11,15], target = 9
+Output: [0,1]
+Explain: nums[0] + nums[1] = 2+7 = 9</pre>
+                <pre>Input:  nums = [3,2,4], target = 6
+Output: [1,2]</pre>
+                <h4>Constraints</h4>
+                <p>• 2 ≤ nums.length ≤ 10⁴<br>• -10⁹ ≤ nums[i] ≤ 10⁹<br>• Only one valid answer exists.</p>
+                <h4>Hints</h4>
+                <p style="color:var(--muted)">💡 Try using a hash map to store visited numbers and their indices for
+                  O(n) time complexity.</p>
+              </div>
+            </div>
+            <div class="editor-panel">
+              <div class="editor-topbar">
+                <select class="lang-select" id="langSelect">
+                  <option>Python 3</option>
+                  <option>JavaScript</option>
+                  <option>Java</option>
+                  <option>C++</option>
+                  <option>Go</option>
+                </select>
+                <div style="font-family:var(--mono);font-size:0.65rem;color:var(--muted)">Auto-save: ✓ on</div>
+                <div class="editor-actions">
+                  <button class="btn btn-ghost btn-sm" onclick="runCode()">▶ Run</button>
+                  <button class="btn btn-teal btn-sm" onclick="submitCode()">Submit</button>
+                </div>
+              </div>
+              <textarea class="code-area" id="codeArea" spellcheck="false">def twoSum(nums, target):
+    # Your solution here
+    seen = {}
+    for i, num in enumerate(nums):
+        complement = target - num
+        if complement in seen:
+            return [seen[complement], i]
+        seen[num] = i
+    return []
+
+# Test cases
+print(twoSum([2, 7, 11, 15], 9))   # [0, 1]
+print(twoSum([3, 2, 4], 6))        # [1, 2]
+print(twoSum([3, 3], 6))           # [0, 1]
+</textarea>
+              <div class="editor-bottom">
+                <div class="test-cases">
+                  <span style="font-family:var(--mono);font-size:0.67rem;color:var(--muted);margin-right:4px">Test
+                    Cases:</span>
+                  <div class="tc pass" id="tc1">Case 1 ✓</div>
+                  <div class="tc pass" id="tc2">Case 2 ✓</div>
+                  <div class="tc run" id="tc3">Case 3 ●</div>
+                  <div class="tc" id="tc4">Case 4</div>
+                  <div class="tc" id="tc5">Case 5</div>
+                </div>
+                <div class="output-tabs">
+                  <button class="output-tab active" onclick="setOutTab(this,'output')">Output</button>
+                  <button class="output-tab" onclick="setOutTab(this,'console')">Console</button>
+                  <button class="output-tab" onclick="setOutTab(this,'result')">Result</button>
+                </div>
+                <div class="output-body" id="outputBody">
+                  <div class="output-line output-success">▶ Running test cases...</div>
+                  <div class="output-line output-success">✓ Case 1: [0, 1] — Passed (2ms)</div>
+                  <div class="output-line output-success">✓ Case 2: [1, 2] — Passed (1ms)</div>
+                  <div class="output-line output-line" style="color:var(--orange)">● Case 3: Running...</div>
+                  <div class="output-line" style="color:var(--muted)"> Cases 4, 5: Pending</div>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ CONTESTS ════════════════════════════════════ -->
+      <div class="page" id="page-contests">
+        <div style="padding:28px 32px">
+          <div style="display:flex;justify-content:space-between;align-items:flex-end;margin-bottom:24px">
+            <div>
+              <div class="page-title">Contests</div>
+              <div class="page-sub">Compete live against thousands of developers</div>
+            </div>
+            <button class="btn btn-teal">📅 Contest Calendar</button>
+          </div>
+          <div style="font-size:0.8rem;font-weight:800;color:var(--white);margin-bottom:12px;letter-spacing:0.02em">🔴
+            LIVE NOW</div>
+          <div class="contest-card" style="border-color:rgba(0,229,195,0.25);background:rgba(0,229,195,0.03)">
+            <div class="contest-time" style="border-color:rgba(0,229,195,0.2)">
+              <div class="ct-num" style="color:var(--teal)">1:24</div>
+              <div class="ct-unit">hrs left</div>
+            </div>
+            <div class="contest-info">
+              <div class="contest-name">SyntaxSphere Weekly Round #84</div>
+              <div class="contest-meta">
+                <span>⚡ 4 problems</span>
+                <span>👥 2,841 participants</span>
+                <span>⏱ 2h 30m duration</span>
+                <span>🌍 Global</span>
+              </div>
+              <div style="margin-top:8px"><span class="tag tag-easy">Algo</span> <span class="tag tag-med">DP</span>
+                <span class="tag tag-hard">Graph</span></div>
+            </div>
+            <div class="contest-right">
+              <div class="c-live">
+                <div class="live-dot"></div>LIVE
+              </div>
+              <div class="contest-prize">🏆 5,000 XP Pool</div>
+              <button class="btn btn-teal btn-sm">Join Now</button>
+            </div>
+          </div>
+
+          <div style="font-size:0.8rem;font-weight:800;color:var(--white);margin:24px 0 12px;letter-spacing:0.02em">⏰
+            UPCOMING</div>
+          <div id="contestList"></div>
+
+          <div style="font-size:0.8rem;font-weight:800;color:var(--white);margin:24px 0 12px">🕘 PAST CONTESTS</div>
+          <div class="card" style="padding:0">
+            <table class="lb-table">
+              <thead>
+                <tr>
+                  <th>Contest</th>
+                  <th>Date</th>
+                  <th>Rank</th>
+                  <th>Score</th>
+                  <th>Problems</th>
+                </tr>
+              </thead>
+              <tbody>
+                <tr>
+                  <td><span style="font-size:0.82rem;font-weight:700;color:var(--white)">Weekly Round #83</span></td>
+                  <td style="font-family:var(--mono);font-size:0.72rem;color:var(--muted)">Feb 26</td>
+                  <td style="font-family:var(--mono);font-size:0.76rem;color:var(--teal)">#412</td>
+                  <td style="font-family:var(--mono);font-size:0.76rem;color:var(--yellow)">1,840</td>
+                  <td><span class="tag tag-easy">3/4</span></td>
+                </tr>
+                <tr>
+                  <td><span style="font-size:0.82rem;font-weight:700;color:var(--white)">Monthly Championship Feb</span>
+                  </td>
+                  <td style="font-family:var(--mono);font-size:0.72rem;color:var(--muted)">Feb 18</td>
+                  <td style="font-family:var(--mono);font-size:0.76rem;color:var(--teal)">#887</td>
+                  <td style="font-family:var(--mono);font-size:0.76rem;color:var(--yellow)">2,210</td>
+                  <td><span class="tag tag-med">4/6</span></td>
+                </tr>
+                <tr>
+                  <td><span style="font-size:0.82rem;font-weight:700;color:var(--white)">Weekly Round #82</span></td>
+                  <td style="font-family:var(--mono);font-size:0.72rem;color:var(--muted)">Feb 12</td>
+                  <td style="font-family:var(--mono);font-size:0.76rem;color:var(--teal)">#204</td>
+                  <td style="font-family:var(--mono);font-size:0.76rem;color:var(--yellow)">2,650</td>
+                  <td><span class="tag tag-easy">4/4</span></td>
+                </tr>
+              </tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ LEADERBOARD ════════════════════════════════ -->
+      <div class="page" id="page-leaderboard">
+        <div style="padding:28px 32px">
+          <div class="page-title">Global Leaderboard</div>
+          <div class="page-sub">Weekly rankings · resets every Monday 00:00 UTC</div>
+
+          <div class="lb-trophy" style="margin-bottom:24px" id="trophyRow"></div>
+
+          <div class="lb-filters">
+            <div class="filter-tabs">
+              <button class="filter-tab active" onclick="setFTab(this)">Global</button>
+              <button class="filter-tab" onclick="setFTab(this)">Country</button>
+              <button class="filter-tab" onclick="setFTab(this)">Friends</button>
+            </div>
+            <div class="filter-tabs">
+              <button class="filter-tab active" onclick="setFTab(this)">This Week</button>
+              <button class="filter-tab" onclick="setFTab(this)">This Month</button>
+              <button class="filter-tab" onclick="setFTab(this)">All Time</button>
+            </div>
+            <select class="filter-select">
+              <option>All Tracks</option>
+              <option>Algorithms</option>
+              <option>SQL</option>
+              <option>System Design</option>
+            </select>
+          </div>
+
+          <div class="card" style="padding:0;margin-bottom:24px">
+            <table class="lb-table">
+              <thead>
+                <tr>
+                  <th>#</th>
+                  <th>Developer</th>
+                  <th>Solved</th>
+                  <th>Streak</th>
+                  <th style="text-align:right">Score</th>
+                  <th></th>
+                </tr>
+              </thead>
+              <tbody id="lbTbody"></tbody>
+            </table>
+          </div>
+        </div>
+      </div>
+
+      <!-- ════ PROFILE ════════════════════════════════════ -->
+      <div class="page" id="page-profile">
+        <div style="padding:28px 32px">
+
+          <div class="profile-hero">
+            <div class="profile-av">YO</div>
+            <div>
+              <div class="profile-name">Your Name</div>
+              <div class="profile-handle">@yourname · Member since Jan 2024</div>
+              <div class="profile-tags">
+                <span class="tag tag-easy">Bronze Tier</span>
+                <span style="background:var(--violet-d);color:var(--violet)" class="tag">Top 100%</span>
+                <span style="background:var(--orange-d);color:var(--orange)" class="tag streak-indicator">22-day streak</span>
+              </div>
+              <div class="profile-bio">Full-stack developer passionate about clean code, algorithms, and system design.
+                Building things that matter.</div>
+            </div>
+            <div class="profile-actions">
+              <button class="btn btn-teal">Edit Profile</button>
+              <button class="btn btn-ghost">Share</button>
+            </div>
+          </div>
+
+          <div class="grid4" style="margin-bottom:24px">
+            <div class="stat-card">
+              <div class="stat-card-val" style="color:var(--teal)">247</div>
+              <div class="stat-card-lbl">Problems Solved</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-val" style="color:var(--violet)" id="profileXP">50</div>
+              <div class="stat-card-lbl">Total XP</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-val" style="color:var(--blue)">#1,204</div>
+              <div class="stat-card-lbl">Global Rank</div>
+            </div>
+            <div class="stat-card">
+              <div class="stat-card-val" style="color:var(--yellow)">12</div>
+              <div class="stat-card-lbl">Contests Entered</div>
+            </div>
+          </div>
+
+          <div class="grid2" style="margin-bottom:20px">
+            <div class="card">
+              <div style="font-size:0.82rem;font-weight:800;color:var(--white);margin-bottom:16px">🏅 Badges Earned
+              </div>
+              <div class="badges-row">
+                <div class="badge-chip streak-indicator"><span>🔥</span> 22-Day Streak</div>
+                <div class="badge-chip"><span>⚡</span> 100 Problems</div>
+                <div class="badge-chip"><span>🏆</span> Contest Winner</div>
+                <div class="badge-chip"><span>🧠</span> Algorithm Pro</div>
+                <div class="badge-chip"><span>💾</span> SQL Master</div>
+                <div class="badge-chip"><span>🌟</span> Top Contributor</div>
+              </div>
+            </div>
+            <div class="card">
+              <div style="font-size:0.82rem;font-weight:800;color:var(--white);margin-bottom:16px">🎯 Skill Ratings
+              </div>
+              <div class="skill-grid">
+                <div class="sk"><span class="sk-name">Algorithms</span>
+                  <div class="sk-track">
+                    <div class="sk-fill" style="width:78%;background:var(--teal)"></div>
+                  </div><span class="sk-pct">78%</span>
+                </div>
+                <div class="sk"><span class="sk-name">Data Struct.</span>
+                  <div class="sk-track">
+                    <div class="sk-fill" style="width:65%;background:var(--blue)"></div>
+                  </div><span class="sk-pct">65%</span>
+                </div>
+                <div class="sk"><span class="sk-name">System Design</span>
+                  <div class="sk-track">
+                    <div class="sk-fill" style="width:42%;background:var(--violet)"></div>
+                  </div><span class="sk-pct">42%</span>
+                </div>
+                <div class="sk"><span class="sk-name">SQL</span>
+                  <div class="sk-track">
+                    <div class="sk-fill" style="width:88%;background:var(--teal)"></div>
+                  </div><span class="sk-pct">88%</span>
+                </div>
+                <div class="sk"><span class="sk-name">Security</span>
+                  <div class="sk-track">
+                    <div class="sk-fill" style="width:35%;background:var(--red)"></div>
+                  </div><span class="sk-pct">35%</span>
+                </div>
+              </div>
+            </div>
+          </div>
+
+          <div class="card">
+            <div style="font-size:0.82rem;font-weight:800;color:var(--white);margin-bottom:16px">📅 Submission Activity
+            </div>
+            <div class="heatmap" id="profileHeatmap"></div>
+          </div>
+
+        </div>
+      </div>
+
+    </div><!-- end main-content -->
+  </div><!-- end app -->
+
+  <script>
+    // ── DATA ──────────────────────────────────────
+    const challengeData = [
+      { id: 1, icon: '🔢', title: 'Two Sum', cats: ['Array', 'Hash Map'], diff: 'Easy', acc: 84, xp: 80, status: 'solved' },
+      { id: 2, icon: '🔗', title: 'Linked List Cycle', cats: ['Linked List', 'Two Pointers'], diff: 'Easy', acc: 76, xp: 80, status: 'solved' },
+      { id: 3, icon: '🌳', title: 'Binary Tree Inorder', cats: ['Tree', 'DFS'], diff: 'Easy', acc: 72, xp: 80, status: 'solved' },
+      { id: 4, icon: '📊', title: 'Merge Intervals', cats: ['Array', 'Sorting'], diff: 'Medium', acc: 55, xp: 160, status: 'solved' },
+      { id: 5, icon: '⚡', title: 'Jump Game II', cats: ['DP', 'Greedy'], diff: 'Medium', acc: 48, xp: 160, status: 'attempted' },
+      { id: 6, icon: '🔄', title: 'LRU Cache', cats: ['Design', 'Hash Map'], diff: 'Medium', acc: 43, xp: 200, status: 'attempted' },
+      { id: 7, icon: '🌐', title: 'Course Schedule', cats: ['Graph', 'Topological Sort'], diff: 'Medium', acc: 51, xp: 160, status: '' },
+      { id: 8, icon: '🧩', title: 'Word Break II', cats: ['DP', 'Backtracking'], diff: 'Hard', acc: 36, xp: 300, status: '' },
+      { id: 9, icon: '🔀', title: 'Median of Two Arrays', cats: ['Binary Search', 'Divide & Conquer'], diff: 'Hard', acc: 31, xp: 320, status: '' },
+      { id: 10, icon: '💎', title: 'Regular Expression Match', cats: ['DP', 'Recursion'], diff: 'Hard', acc: 28, xp: 320, status: '' },
+      { id: 11, icon: '🚀', title: 'Design Search Autocomplete', cats: ['System Design', 'Trie'], diff: 'Expert', acc: 22, xp: 500, status: '' },
+      { id: 12, icon: '🔐', title: 'Serialize Binary Tree', cats: ['Tree', 'BFS'], diff: 'Hard', acc: 33, xp: 300, status: '' },
+    ];
+
+    const tracksData = [
+      { icon: '🔢', title: 'Data Structures', desc: 'Master arrays, linked lists, trees, graphs, and more through 80+ progressive challenges.', badge: 'tb-pop', badgeText: 'POPULAR', lessons: 80, time: '12h', prog: 45 },
+      { icon: '⚡', title: 'Algorithms', desc: 'Sorting, searching, dynamic programming, greedy — build your algorithmic intuition step by step.', badge: 'tb-hot', badgeText: 'HOT', lessons: 95, time: '16h', prog: 32 },
+      { icon: '🗃️', title: 'SQL Mastery', desc: 'From basic SELECT to advanced window functions, CTEs, and query optimization techniques.', badge: 'tb-free', badgeText: 'FREE', lessons: 60, time: '9h', prog: 88 },
+      { icon: '🏗️', title: 'System Design', desc: 'Design scalable, distributed systems. Learn load balancers, caching, databases, and microservices.', badge: 'tb-new', badgeText: 'NEW', lessons: 48, time: '14h', prog: 12 },
+      { icon: '🔐', title: 'Security & Auth', desc: 'Web vulnerabilities, JWT, OAuth2, encryption, and secure coding practices for modern apps.', badge: 'tb-new', badgeText: 'NEW', lessons: 40, time: '8h', prog: 0 },
+      { icon: '🐍', title: 'Python for DSA', desc: 'Learn Python through the lens of data structures and algorithms. Perfect for interview prep.', badge: 'tb-pop', badgeText: 'POPULAR', lessons: 70, time: '11h', prog: 60 },
+    ];
+
+    const lbData = [
+      { r: 1, name: 'Priya S.', handle: '@priya_dev', solved: 312, streak: 45, score: 18400, pct: 100, color: '#00e5c3', me: false },
+      { r: 2, name: 'Marcus K.', handle: '@marcusk', solved: 298, streak: 38, score: 17200, pct: 93, color: '#3b9eff', me: false },
+      { r: 3, name: 'Yuki T.', handle: '@yukitech', solved: 287, streak: 52, score: 16100, pct: 87, color: '#9d6bff', me: false },
+      { r: 4, name: 'Aditi R.', handle: '@aditiR', solved: 264, streak: 21, score: 14800, pct: 80, color: '#ff8c42', me: false },
+      { r: 5, name: 'Leon M.', handle: '@leonm', solved: 251, streak: 14, score: 13600, pct: 73, color: '#ff5e6a', me: false },
+      { r: 6, name: 'Sara L.', handle: '@saral_eng', solved: 239, streak: 31, score: 12400, pct: 67, color: '#7ee83a', me: false },
+      { r: 7, name: 'Chen W.', handle: '@chenwdev', solved: 228, streak: 8, score: 11100, pct: 60, color: '#ffd166', me: false },
+      { r: 8, name: 'Omar A.', handle: '@omar_code', solved: 214, streak: 19, score: 9800, pct: 53, color: '#38bdf8', me: false },
+      { r: 1204, name: 'You', handle: '@yourname', solved: 0, streak: 22, score: 50, pct: 1, color: '#00e5c3', me: true },
+    ];
+
+    const contestsData = [
+      { name: 'SyntaxSphere Biweekly #42', days: '3', unit: 'days', probs: 4, part: '1,200 registered', prize: '3,000 XP' },
+      { name: 'Monthly Championship — March', days: '12', unit: 'days', probs: 6, part: 'Open Registration', prize: '10,000 XP + Badge' },
+      { name: 'SQL Sprint Challenge', days: '5', unit: 'days', probs: 8, part: '500 registered', prize: '2,500 XP' },
+    ];
+
+    // ── NAVIGATION ────────────────────────────────
+    function navigate(page) {
+      document.querySelectorAll('.page').forEach(p => p.classList.remove('active'));
+      document.querySelectorAll('.nav-item').forEach(n => n.classList.remove('active'));
+      document.getElementById('page-' + page).classList.add('active');
+      document.querySelectorAll('.nav-item').forEach(n => {
+        if (n.querySelector('.nav-label')?.textContent.toLowerCase().includes(
+          page === 'dashboard' ? 'dash' :
+            page === 'editor' ? 'code' :
+              page === 'contests' ? 'contest' :
+                page === 'leaderboard' ? 'leader' :
+                  page === 'profile' ? 'profile' :
+                    page === 'learn' ? 'learn' :
+                      page === 'challenges' ? 'challeng' : page
+        )) n.classList.add('active');
+      });
+    }
+
+    // ── HEATMAP ───────────────────────────────────
+    function buildHeatmap(id) {
+      const el = document.getElementById(id);
+      if (!el) return;
+      el.innerHTML = '';
+      const levels = [0, 0, 0, 1, 0, 1, 2, 0, 1, 2, 3, 1, 2, 3, 4, 2, 3, 4, 3, 2, 4, 3, 2, 1, 2, 3,
+        4, 3, 2, 4, 4, 3, 2, 1, 0, 1, 2, 3, 4, 3, 2, 1, 2, 3, 4, 4, 3, 4, 4, 3, 2, 4];
+      levels.forEach(l => {
+        const d = document.createElement('div');
+        d.className = 'heat-cell h' + l;
+        el.appendChild(d);
+      });
+    }
+
+    // ── CHALLENGES TABLE ──────────────────────────
+    function renderChallenges(data) {
+      const tbody = document.getElementById('challengesTbody');
+      tbody.innerHTML = '';
+      data.forEach(c => {
+        const diffClass = { Easy: 'tag-easy', Medium: 'tag-med', Hard: 'tag-hard', Expert: 'tag-expert' }[c.diff];
+        const statusIcon = c.status === 'solved' ? '✅' : c.status === 'attempted' ? '⚠️' : '';
+        const tr = document.createElement('tr');
+        tr.onclick = () => navigate('editor');
+        tr.innerHTML = `
+      <td class="status-icon">${statusIcon}</td>
+      <td>
+        <div class="ch-name-cell">
+          <div class="ch-icon-sm" style="background:${iconBg(c.diff)}">${c.icon}</div>
+          <div>
+            <div class="ch-title-text">${c.title}</div>
+            <div class="ch-cats">${c.cats.map(cat => `<span class="ch-cat">${cat}</span>`).join('')}</div>
+          </div>
+        </div>
+      </td>
+      <td><span class="tag ${diffClass}">${c.diff}</span></td>
+      <td>
+        <div style="display:flex;align-items:center;gap:8px">
+          <div class="solve-pct-bar"><div class="solve-fill" style="width:${c.acc}%"></div></div>
+          <span style="font-family:var(--mono);font-size:0.67rem;color:var(--muted)">${c.acc}%</span>
+        </div>
+      </td>
+      <td style="font-family:var(--mono);font-size:0.72rem;color:var(--yellow)">+${c.xp}</td>
+      <td><button class="btn btn-ghost btn-sm" onclick="event.stopPropagation();navigate('editor')">Solve</button></td>
+    `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    function iconBg(diff) {
+      return { Easy: 'var(--teal-d)', Medium: 'var(--orange-d)', Hard: 'var(--red-d)', Expert: 'var(--violet-d)' }[diff];
+    }
+
+    function filterChallenges(val) {
+      const filtered = val === 'all' ? challengeData : challengeData.filter(c => c.diff === val);
+      renderChallenges(filtered);
+    }
+
+    // ── TRACKS ────────────────────────────────────
+    function renderTracks() {
+      const grid = document.getElementById('tracksGrid');
+      tracksData.forEach(t => {
+        const div = document.createElement('div');
+        div.className = 'track-card';
+        div.onclick = () => navigate('editor');
+        div.innerHTML = `
+      <div class="track-top">
+        <div class="track-icon" style="background:rgba(0,229,195,0.08)">${t.icon}</div>
+        <span class="track-badge ${t.badge}">${t.badgeText}</span>
+      </div>
+      <div class="track-title">${t.title}</div>
+      <div class="track-desc">${t.desc}</div>
+      <div class="track-foot">
+        <div class="track-meta"><span>📖 ${t.lessons}</span><span>⏱ ${t.time}</span></div>
+        <span class="track-prog">${t.prog > 0 ? t.prog + '% done' : 'Start →'}</span>
+      </div>
+      ${t.prog > 0 ? `<div style="height:3px;background:var(--s3);border-radius:2px;margin-top:10px;overflow:hidden"><div style="height:100%;width:${t.prog}%;background:var(--teal);border-radius:2px"></div></div>` : ''}
+    `;
+        grid.appendChild(div);
+      });
+    }
+
+    // ── LEADERBOARD ───────────────────────────────
+    function renderLeaderboard() {
+      // Trophy top 3
+      const trophy = document.getElementById('trophyRow');
+      const top3 = lbData.slice(0, 3);
+      const medals = ['🥇', '🥈', '🥉'];
+      const tcClass = ['tc-1', 'tc-2', 'tc-3'];
+      const scoreColor = ['t1-score', 't2-score', 't3-score'];
+      top3.forEach((u, i) => {
+        const d = document.createElement('div');
+        d.className = `trophy-card ${tcClass[i]}`;
+        d.style.flex = '1';
+        d.innerHTML = `
+      <div class="trophy-medal">${medals[i]}</div>
+      <div>
+        <div class="u-av" style="background:${u.color}18;color:${u.color};width:32px;height:32px;border-radius:50%;display:flex;align-items:center;justify-content:center;font-size:0.72rem;font-weight:800;margin-bottom:4px">${u.name[0]}</div>
+        <div class="trophy-info-name">${u.name}</div>
+        <div class="trophy-info-score ${scoreColor[i]}" style="font-family:var(--mono);font-size:0.7rem">${u.score.toLocaleString()} pts</div>
+      </div>
+    `;
+        trophy.appendChild(d);
+      });
+
+      // Table
+      const tbody = document.getElementById('lbTbody');
+      const rCls = ['rank-1', 'rank-2', 'rank-3'];
+      const rSym = ['🥇', '🥈', '🥉'];
+      lbData.forEach((u, i) => {
+        const tr = document.createElement('tr');
+        if (u.me) tr.className = 'me';
+        tr.innerHTML = `
+      <td class="rank-cell ${i < 3 ? rCls[i] : ''}">${i < 3 ? rSym[i] : u.r}</td>
+      <td>
+        <div class="user-cell">
+          <div class="u-av" style="background:${u.color}18;color:${u.color}">${u.name[0]}</div>
+          <div>
+            <div class="u-name" ${u.me ? 'style="color:var(--teal)"' : ''}>${u.name}${u.me ? ' (You)' : ''}</div>
+            <div class="u-handle">${u.handle}</div>
+          </div>
+        </div>
+      </td>
+      <td class="solved-cell">${u.solved}</td>
+      <td><span style="font-family:var(--mono);font-size:0.72rem;color:var(--orange)">🔥 ${u.streak}</span></td>
+      <td class="score-cell">${u.score.toLocaleString()}</td>
+      <td><div class="bar100"><div class="bar-fill" style="width:${u.pct}%;background:${u.color};opacity:0.6"></div></div></td>
+    `;
+        tbody.appendChild(tr);
+      });
+    }
+
+    // ── CONTESTS ─────────────────────────────────
+    function renderContests() {
+      const list = document.getElementById('contestList');
+      contestsData.forEach(c => {
+        const d = document.createElement('div');
+        d.className = 'contest-card';
+        d.innerHTML = `
+      <div class="contest-time">
+        <div class="ct-num">${c.days}</div>
+        <div class="ct-unit">${c.unit}</div>
+      </div>
+      <div class="contest-info">
+        <div class="contest-name">${c.name}</div>
+        <div class="contest-meta">
+          <span>⚡ ${c.probs} problems</span>
+          <span>👥 ${c.part}</span>
+          <span>🌍 Global</span>
+        </div>
+      </div>
+      <div class="contest-right">
+        <div class="contest-prize">${c.prize}</div>
+        <button class="btn btn-ghost btn-sm">Register</button>
+      </div>
+    `;
+        list.appendChild(d);
+      });
+    }
+
+    // ── DASH CHALLENGES ───────────────────────────
+    function renderDashChallenges() {
+      const el = document.getElementById('dashChallenges');
+      challengeData.slice(4, 7).forEach(c => {
+        const diffClass = { Easy: 'tag-easy', Medium: 'tag-med', Hard: 'tag-hard', Expert: 'tag-expert' }[c.diff];
+        const d = document.createElement('div');
+        d.style.cssText = 'display:flex;align-items:center;gap:12px;padding:10px 12px;background:var(--s2);border:1px solid var(--border);border-radius:9px;cursor:pointer;transition:border-color 0.15s';
+        d.onmouseenter = () => d.style.borderColor = 'var(--teal)';
+        d.onmouseleave = () => d.style.borderColor = 'var(--border)';
+        d.onclick = () => navigate('editor');
+        d.innerHTML = `
+      <div style="width:34px;height:34px;border-radius:8px;display:flex;align-items:center;justify-content:center;background:${iconBg(c.diff)};font-size:0.9rem">${c.icon}</div>
+      <div style="flex:1">
+        <div style="font-size:0.82rem;font-weight:700;color:var(--white)">${c.title}</div>
+        <div style="font-family:var(--mono);font-size:0.62rem;color:var(--muted)">${c.cats.join(' · ')}</div>
+      </div>
+      <span class="tag ${diffClass}">${c.diff}</span>
+      <span style="font-family:var(--mono);font-size:0.68rem;color:var(--yellow)">+${c.xp} XP</span>
+      <button class="btn btn-ghost btn-sm" style="flex-shrink:0">Solve →</button>
+    `;
+        el.appendChild(d);
+      });
+    }
+
+    // ── UI HELPERS ────────────────────────────────
+    function setFTab(el) {
+      el.closest('.filter-tabs').querySelectorAll('.filter-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function setOutTab(el, name) {
+      document.querySelectorAll('.output-tab').forEach(t => t.classList.remove('active'));
+      el.classList.add('active');
+    }
+
+    function runCode() {
+      const out = document.getElementById('outputBody');
+      out.innerHTML = '<div class="output-line" style="color:var(--orange)">▶ Running code...</div>';
+      setTimeout(() => {
+        out.innerHTML = `
+      <div class="output-line output-success">✓ Case 1: [0, 1]  — Passed (1ms)</div>
+      <div class="output-line output-success">✓ Case 2: [1, 2]  — Passed (1ms)</div>
+      <div class="output-line output-success">✓ Case 3: [0, 1]  — Passed (1ms)</div>
+      <div class="output-line" style="color:var(--muted)">  Cases 4, 5: Not yet run</div>`;
+        document.getElementById('tc3').className = 'tc pass';
+        document.getElementById('tc3').textContent = 'Case 3 ✓';
+      }, 900);
+    }
+
+    function submitCode() {
+      const out = document.getElementById('outputBody');
+      out.innerHTML = '<div class="output-line" style="color:var(--orange)">⏳ Submitting to judge...</div>';
+      setTimeout(() => {
+        out.innerHTML = `
+      <div class="output-line output-success" style="font-size:0.82rem;font-weight:700">🎉 Accepted! All 5/5 test cases passed.</div>
+      <div class="output-line" style="color:var(--muted);margin-top:6px">Runtime: 52ms (beats 94.2%)  |  Memory: 15.1MB (beats 87.6%)</div>
+      <div class="output-line" style="color:var(--yellow);margin-top:6px">⚡ +80 XP earned!</div>`;
+        ['tc4', 'tc5'].forEach(id => { document.getElementById(id).className = 'tc pass'; document.getElementById(id).textContent = id === 'tc4' ? 'Case 4 ✓' : 'Case 5 ✓'; });
+        
+        // Mark daily goal as done
+        markDailyGoalDone();
+      }, 1200);
+    }
+
+    function markDailyGoalDone() {
+      const card = document.getElementById('dailyGoalCard');
+      const sub = document.getElementById('dgSub');
+      const progress = document.getElementById('dgProgress');
+      const status = document.getElementById('dgStatus');
+      
+      if(card) {
+        progress.style.width = '100%';
+        sub.textContent = 'Awesome! You\'ve completed today\'s goal.';
+        status.innerHTML = '<span class="tag tag-easy">Completed</span>';
+        
+        // Show streak indicators
+        document.querySelectorAll('.streak-indicator').forEach(el => el.classList.add('active'));
+      }
+    }
+
+    // ── INIT ──────────────────────────────────────
+    const userStr = localStorage.getItem('syntaxSphereUser');
+    if (!userStr) {
+      window.location.href = '/';
+    } else {
+      try {
+        const user = JSON.parse(userStr);
+        const name = user.username || 'Developer';
+        const init = name.slice(0, 2).toUpperCase();
+        
+        document.querySelectorAll('.user-mini-name').forEach(el => el.textContent = name);
+        document.querySelectorAll('.avatar-btn, .user-mini-av').forEach(el => el.textContent = init);
+        
+        const welcomeH2 = document.querySelector('.dash-hero-left h2');
+        if(welcomeH2) welcomeH2.innerHTML = `Welcome back, ${name} 👋`;
+      } catch (e) {
+        console.error(e);
+      }
+    }
+
+    buildHeatmap('heatmap');
+    buildHeatmap('profileHeatmap');
+    renderChallenges(challengeData);
+    renderTracks();
+    renderLeaderboard();
+    renderContests();
+    renderDashChallenges();
+
+    function logout() {
+      localStorage.removeItem('syntaxSphereUser');
+      window.location.href = '/';
+    }
+  </script>
+</body>
+
+</html>

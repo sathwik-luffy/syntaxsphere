@@ -1,0 +1,949 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Syntax Sphere — Company Interview Prep</title>
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;700&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #07080f;
+    --bg2: #0d1020;
+    --bg3: #111628;
+    --surface: #161c35;
+    --surface2: #1d2444;
+    --border: #252d50;
+    --accent: #4f8ef7;
+    --accent2: #7c5cf6;
+    --accent3: #2bd9c4;
+    --text: #e8eaf6;
+    --text-muted: #7b83b0;
+    --text-dim: #4a5280;
+    --green: #2bd974;
+    --orange: #f7a14f;
+    --red: #f75f5f;
+  }
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+  html { scroll-behavior: smooth; }
+  body { background: var(--bg); color: var(--text); font-family: 'Syne', sans-serif; overflow-x: hidden; }
+
+  .sphere-bg {
+    position: fixed; top: -200px; right: -200px;
+    width: 700px; height: 700px; border-radius: 50%;
+    background: radial-gradient(circle at 40% 40%, rgba(79,142,247,.15), rgba(124,92,246,.08), transparent 70%);
+    filter: blur(60px); pointer-events: none; z-index: 0;
+    animation: drift 18s ease-in-out infinite alternate;
+  }
+  .sphere-bg2 {
+    position: fixed; bottom: -300px; left: -200px;
+    width: 600px; height: 600px; border-radius: 50%;
+    background: radial-gradient(circle at 60% 60%, rgba(43,217,196,.10), rgba(79,142,247,.06), transparent 70%);
+    filter: blur(80px); pointer-events: none; z-index: 0;
+    animation: drift 22s ease-in-out infinite alternate-reverse;
+  }
+  @keyframes drift { from { transform: translate(0,0); } to { transform: translate(40px, 60px); } }
+
+  /* NAV */
+  nav {
+    position: fixed; top: 0; left: 0; right: 0; z-index: 100;
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 0 2.5rem; height: 64px;
+    background: rgba(7,8,15,.88); backdrop-filter: blur(18px);
+    border-bottom: 1px solid var(--border);
+  }
+  .logo { display: flex; align-items: center; gap: 10px; font-size: 1.25rem; font-weight: 800; letter-spacing: -.02em; color: var(--text); text-decoration: none; }
+  .logo-sphere {
+    width: 28px; height: 28px; border-radius: 50%;
+    background: conic-gradient(from 200deg, var(--accent), var(--accent2), var(--accent3), var(--accent));
+    box-shadow: 0 0 18px rgba(79,142,247,.5); animation: spin 8s linear infinite;
+  }
+  @keyframes spin { to { transform: rotate(360deg); } }
+  .logo span { color: var(--accent); }
+  .nav-tag {
+    font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase;
+    color: var(--text-muted); font-family: 'JetBrains Mono', monospace;
+  }
+
+  /* LAYOUT */
+  .page { position: relative; z-index: 1; padding-top: 64px; }
+
+  /* HERO */
+  .hero {
+    padding: 5rem 4rem 3.5rem; max-width: 1100px; margin: 0 auto;
+  }
+  .hero-tag {
+    display: inline-flex; align-items: center; gap: 7px;
+    background: rgba(79,142,247,.1); border: 1px solid rgba(79,142,247,.25);
+    color: var(--accent); font-size: .75rem; font-weight: 700; letter-spacing: .1em;
+    text-transform: uppercase; padding: .3rem .9rem; border-radius: 100px; margin-bottom: 1.5rem;
+  }
+  .hero-tag .dot { width: 6px; height: 6px; border-radius: 50%; background: var(--accent); animation: pulse 2s infinite; }
+  @keyframes pulse { 0%,100%{opacity:1} 50%{opacity:.3} }
+  h1 {
+    font-size: clamp(2.4rem, 5vw, 4.2rem); font-weight: 800; letter-spacing: -.04em; line-height: 1.07;
+    margin-bottom: 1rem;
+    background: linear-gradient(135deg, #e8eaf6 30%, #7c9ef7 60%, var(--accent3));
+    -webkit-background-clip: text; -webkit-text-fill-color: transparent; background-clip: text;
+  }
+  .hero-sub {
+    font-size: 1rem; color: var(--text-muted); line-height: 1.75; max-width: 640px;
+    margin-bottom: 2rem; font-family: 'JetBrains Mono', monospace; font-weight: 300;
+  }
+  .stat-row { display: flex; gap: 2rem; flex-wrap: wrap; margin-bottom: 3.5rem; }
+  .stat { display: flex; flex-direction: column; gap: .2rem; }
+  .stat-num { font-size: 2rem; font-weight: 800; letter-spacing: -.03em; color: var(--text); }
+  .stat-num span { color: var(--accent3); }
+  .stat-label { font-size: .72rem; font-weight: 600; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+
+  /* SEARCH */
+  .search-bar {
+    max-width: 1100px; margin: 0 auto; padding: 0 4rem 2.5rem;
+  }
+  .search-wrap {
+    display: flex; align-items: center; gap: .75rem;
+    background: var(--surface); border: 1px solid var(--border);
+    border-radius: 12px; padding: .75rem 1.25rem;
+    transition: border-color .2s;
+  }
+  .search-wrap:focus-within { border-color: var(--accent); }
+  .search-icon { color: var(--text-dim); font-size: 1rem; }
+  #searchInput {
+    background: none; border: none; outline: none; color: var(--text);
+    font-family: 'JetBrains Mono', monospace; font-size: .9rem; flex: 1;
+  }
+  #searchInput::placeholder { color: var(--text-dim); }
+  .search-count {
+    font-size: .72rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;
+    white-space: nowrap;
+  }
+
+  /* LEGEND */
+  .legend {
+    max-width: 1100px; margin: 0 auto; padding: 0 4rem 2rem;
+    display: flex; gap: 1.5rem; flex-wrap: wrap; align-items: center;
+  }
+  .legend-label { font-size: .7rem; font-weight: 700; letter-spacing: .1em; text-transform: uppercase; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; }
+  .leg { display: flex; align-items: center; gap: .4rem; font-size: .75rem; color: var(--text-muted); font-family: 'JetBrains Mono', monospace; }
+  .leg-dot { width: 8px; height: 8px; border-radius: 50%; flex-shrink: 0; }
+  .leg-p { background: var(--accent); }
+  .leg-g { background: var(--accent2); }
+  .leg-t { background: var(--accent3); }
+  .leg-e { background: var(--orange); }
+
+  /* TABLE WRAPPER */
+  .table-wrap { max-width: 1100px; margin: 0 auto; padding: 0 4rem 5rem; overflow-x: auto; }
+
+  /* COMPANY TABLE */
+  .company-table {
+    width: 100%; border-collapse: collapse; min-width: 700px;
+  }
+  .company-table thead tr {
+    background: var(--bg3);
+    border-bottom: 1px solid var(--border);
+  }
+  .company-table th {
+    padding: .75rem 1rem; text-align: left;
+    font-size: .65rem; font-weight: 700; letter-spacing: .12em; text-transform: uppercase;
+    color: var(--text-dim); font-family: 'JetBrains Mono', monospace;
+  }
+  .company-table th:first-child { padding-left: 1.5rem; min-width: 200px; }
+  .company-table tbody tr {
+    border-bottom: 1px solid rgba(37,45,80,.45);
+    transition: background .15s;
+  }
+  .company-table tbody tr:hover { background: rgba(79,142,247,.04); }
+  .company-table tbody tr.hidden { display: none; }
+
+  .company-table td { padding: .7rem 1rem; vertical-align: middle; }
+  .company-table td:first-child { padding-left: 1.5rem; }
+
+  /* Company name cell */
+  .company-name {
+    display: flex; align-items: center; gap: .75rem;
+  }
+  .company-initial {
+    width: 34px; height: 34px; border-radius: 8px; flex-shrink: 0;
+    display: flex; align-items: center; justify-content: center;
+    font-size: .75rem; font-weight: 800; letter-spacing: -.01em;
+    font-family: 'JetBrains Mono', monospace;
+  }
+  .company-title { font-size: .9rem; font-weight: 700; color: var(--text); }
+  .company-type { font-size: .68rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; margin-top: .08rem; }
+
+  /* Link buttons */
+  .link-btn {
+    display: inline-flex; align-items: center; gap: .35rem;
+    padding: .3rem .7rem; border-radius: 6px;
+    font-size: .72rem; font-weight: 600; letter-spacing: .04em; text-transform: uppercase;
+    text-decoration: none; font-family: 'JetBrains Mono', monospace;
+    transition: opacity .18s, transform .18s;
+    white-space: nowrap;
+  }
+  .link-btn:hover { opacity: .8; transform: translateY(-1px); }
+  .link-btn-p { color: var(--accent); background: rgba(79,142,247,.1); border: 1px solid rgba(79,142,247,.2); }
+  .link-btn-g { color: #a07cf7; background: rgba(124,92,246,.1); border: 1px solid rgba(124,92,246,.2); }
+  .link-btn-t { color: var(--accent3); background: rgba(43,217,196,.1); border: 1px solid rgba(43,217,196,.2); }
+  .link-btn-e { color: var(--orange); background: rgba(247,161,79,.1); border: 1px solid rgba(247,161,79,.2); }
+  .na { font-size: .7rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace; padding: .3rem .5rem; }
+  .btn-arrow { font-size: .7rem; opacity: .6; }
+
+  /* TAGS column */
+  .tag-cell { display: flex; flex-wrap: wrap; gap: .3rem; }
+  .tag {
+    font-size: .62rem; padding: .18rem .5rem; border-radius: 4px;
+    font-family: 'JetBrains Mono', monospace; font-weight: 600; letter-spacing: .04em;
+  }
+  .tag-product { color: #7cf7e2; background: rgba(43,217,196,.1); }
+  .tag-service { color: #a07cf7; background: rgba(124,92,246,.1); }
+  .tag-fintech { color: var(--orange); background: rgba(247,161,79,.1); }
+  .tag-faang { color: var(--accent); background: rgba(79,142,247,.1); }
+  .tag-mnc { color: #f77baa; background: rgba(247,123,170,.1); }
+
+  /* Footer */
+  footer {
+    border-top: 1px solid var(--border); padding: 1.5rem 4rem;
+    display: flex; justify-content: space-between; align-items: center;
+    flex-wrap: wrap; gap: .5rem;
+    position: relative; z-index: 1;
+  }
+  .footer-left { display: flex; align-items: center; gap: .6rem; }
+  .logo-small { font-size: .85rem; font-weight: 800; color: var(--accent); }
+  .footer-left span { color: var(--text-dim); font-size: .75rem; font-family: 'JetBrains Mono', monospace; }
+  .source-note {
+    font-size: .68rem; color: var(--text-dim); font-family: 'JetBrains Mono', monospace;
+    text-align: right;
+  }
+  .source-note a { color: var(--text-dim); text-decoration: none; border-bottom: 1px dashed var(--text-dim); transition: color .2s; }
+  .source-note a:hover { color: var(--accent3); }
+
+  /* Colors for company initials */
+  .ci-blue { background: rgba(79,142,247,.15); color: var(--accent); }
+  .ci-purple { background: rgba(124,92,246,.15); color: #a07cf7; }
+  .ci-teal { background: rgba(43,217,196,.15); color: var(--accent3); }
+  .ci-orange { background: rgba(247,161,79,.15); color: var(--orange); }
+  .ci-red { background: rgba(247,95,95,.15); color: var(--red); }
+  .ci-green { background: rgba(43,217,116,.15); color: var(--green); }
+  .ci-pink { background: rgba(247,123,170,.15); color: #f77baa; }
+
+  ::-webkit-scrollbar { width: 5px; height: 5px; }
+  ::-webkit-scrollbar-track { background: transparent; }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  @media (max-width: 768px) {
+    .hero, .search-bar, .legend, .table-wrap { padding-left: 1.25rem; padding-right: 1.25rem; }
+    footer { padding: 1.25rem; flex-direction: column; align-items: flex-start; }
+    .source-note { text-align: left; }
+  }
+</style>
+</head>
+<body>
+<div class="sphere-bg"></div>
+<div class="sphere-bg2"></div>
+
+<nav>
+  <a href="#" class="logo">
+    <div class="logo-sphere"></div>
+    Syntax<span>Sphere</span>
+  </a>
+  <div style="display: flex; align-items: center; justify-content: space-between; gap: 2rem;">
+    <div class="nav-tag">// Company Interview Prep</div>
+    <div class="user-profile" id="userProfile" style="display: none; align-items: center; gap: 10px;">
+      <div id="userAvatar" style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; color: #fff;"></div>
+      <div style="display: flex; flex-direction: column;">
+        <span id="userNameDisplay" style="font-size: 0.8rem; font-weight: 700; color: var(--text);"></span>
+        <button onclick="logout()" style="background: transparent; border: none; color: var(--red); font-size: 0.7rem; font-weight: 600; cursor: pointer; text-align: left; padding: 0;">Log Out</button>
+      </div>
+    </div>
+  </div>
+</nav>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-tag"><span class="dot"></span> Interview Preparation Hub</div>
+    <h1>Company-Wise<br>Interview Prep</h1>
+    <p class="hero-sub">// Curated problems, guides, topics & real interview experiences<br>for every major tech company — all in one place.</p>
+    <div class="stat-row">
+      <div class="stat"><div class="stat-num">50<span>+</span></div><div class="stat-label">Companies</div></div>
+      <div class="stat"><div class="stat-num">4</div><div class="stat-label">Resources Each</div></div>
+      <div class="stat"><div class="stat-num">∞</div><div class="stat-label">Problems</div></div>
+    </div>
+  </div>
+
+  <!-- SEARCH -->
+  <div class="search-bar">
+    <div class="search-wrap">
+      <span class="search-icon">🔍</span>
+      <input type="text" id="searchInput" placeholder="Search company... e.g. Google, Amazon, TCS" autocomplete="off">
+      <span class="search-count" id="searchCount">50 companies</span>
+    </div>
+  </div>
+
+  <!-- LEGEND -->
+  <div class="legend">
+    <span class="legend-label">Legend:</span>
+    <span class="leg"><span class="leg-dot leg-p"></span> Practice Problems</span>
+    <span class="leg"><span class="leg-dot leg-g"></span> Prep Guide</span>
+    <span class="leg"><span class="leg-dot leg-t"></span> Topics</span>
+    <span class="leg"><span class="leg-dot leg-e"></span> Experiences</span>
+  </div>
+
+  <!-- TABLE -->
+  <div class="table-wrap">
+    <table class="company-table" id="companyTable">
+      <thead>
+        <tr>
+          <th>Company</th>
+          <th>Type</th>
+          <th>Problems</th>
+          <th>Guide</th>
+          <th>Topics</th>
+          <th>Experiences</th>
+        </tr>
+      </thead>
+      <tbody id="tableBody">
+      </tbody>
+    </table>
+  </div>
+
+</div>
+
+<!-- FOOTER -->
+<footer>
+  <div class="footer-left">
+    <span class="logo-small">SyntaxSphere</span>
+    <span>— Company Interview Prep Directory</span>
+  </div>
+  <div class="source-note">
+    Data sourced from <a href="https://www.geeksforgeeks.org/gfg-academy/company-preparation/" target="_blank">geeksforgeeks.org/gfg-academy/company-preparation</a>
+    · All links © GeeksforGeeks · Last updated Jul 2025
+  </div>
+</footer>
+
+<script>
+const companies = [
+  { name:"Accenture", type:"Service", tags:["service","mnc"], color:"ci-blue",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Accenture&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/accenture-interview-questions/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/accenture-interview-questions/",
+    experiences:"https://www.geeksforgeeks.org/companies/accenture/articles/" },
+
+  { name:"Adobe", type:"Product", tags:["product","mnc"], color:"ci-red",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Adobe&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/adobe-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/adobe-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/adobe/articles/" },
+
+  { name:"Amazon", type:"FAANG / Product", tags:["faang","product"], color:"ci-orange",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Amazon&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/amazon-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/amazon-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/amazon/articles/" },
+
+  { name:"Amdocs", type:"Service", tags:["service"], color:"ci-purple",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Amdocs&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/amdocs-interview-questions-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/amdocs-interview-questions-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/amdocs/articles/" },
+
+  { name:"Apple", type:"FAANG / Product", tags:["faang","product"], color:"ci-teal",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Apple&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/dsa/apple-sde-sheet-interview-questions-and-answers/",
+    topics:"https://www.geeksforgeeks.org/dsa/apple-sde-sheet-interview-questions-and-answers/",
+    experiences:"https://www.geeksforgeeks.org/companies/apple/articles/" },
+
+  { name:"Atlassian", type:"Product", tags:["product"], color:"ci-blue",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Atlassian&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/atlassian-interview-questions-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/atlassian-interview-questions-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/atlassian/articles/" },
+
+  { name:"BNY Mellon", type:"Fintech", tags:["fintech"], color:"ci-green",
+    problems:null,
+    guide:null,
+    topics:"https://www.geeksforgeeks.org/interview-experiences/bny-mellon-interview-questions-and-answers-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/bny-mellon/articles/" },
+
+  { name:"Cisco", type:"Product / MNC", tags:["product","mnc"], color:"ci-blue",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Cisco&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/cisco-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/cisco-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/cisco/articles/" },
+
+  { name:"Cognizant", type:"Service", tags:["service","mnc"], color:"ci-purple",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Cognizant&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/dsa/cognizant-sde-sheet-interview-questions-and-answers/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/cognizant-cts-placement-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/cognizant/articles/" },
+
+  { name:"DE Shaw", type:"Fintech", tags:["fintech"], color:"ci-orange",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=DE%20Shaw&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/de-shaw-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/d-e-shaw-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/tag/de-shaw/?type=recent" },
+
+  { name:"Deloitte", type:"Service", tags:["service","mnc"], color:"ci-teal",
+    problems:null,
+    guide:null,
+    topics:"https://www.geeksforgeeks.org/interview-experiences/deloitte-interview-questions-and-answers-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/deloitte/articles/" },
+
+  { name:"Directi", type:"Product", tags:["product"], color:"ci-pink",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Directi&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/directi-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/directi-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/tag/directi/?type=recent" },
+
+  { name:"EY (Ernst & Young)", type:"Service", tags:["service","mnc"], color:"ci-blue",
+    problems:null,
+    guide:"https://www.geeksforgeeks.org/interview-experiences/ey-ernst-young-interview-questions-and-answers-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/ey-ernst-young-interview-questions-and-answers-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/ey/articles/" },
+
+  { name:"Facebook / Meta", type:"FAANG / Product", tags:["faang","product"], color:"ci-blue",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Facebook&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/facebook-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/facebook-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/facebook/articles/" },
+
+  { name:"Flipkart", type:"Product", tags:["product"], color:"ci-orange",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Flipkart&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/flipkart-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/flipkart-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/flipkart/articles/" },
+
+  { name:"Goldman Sachs", type:"Fintech", tags:["fintech"], color:"ci-green",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Goldman%20Sachs&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/goldman-sachs-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/goldman-sachs-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/goldman-sachs/articles/" },
+
+  { name:"Google", type:"FAANG / Product", tags:["faang","product"], color:"ci-teal",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Google&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/google-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/google-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/google/articles/" },
+
+  { name:"HCL", type:"Service", tags:["service","mnc"], color:"ci-blue",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=HCL&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/dsa/hcl-sde-sheet-interview-questions-and-answers/",
+    topics:"https://www.geeksforgeeks.org/dsa/hcl-sde-sheet-interview-questions-and-answers/",
+    experiences:"https://www.geeksforgeeks.org/companies/hcl-technologies/articles/" },
+
+  { name:"IBM", type:"Service / MNC", tags:["service","mnc"], color:"ci-blue",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=IBM&sortBy=submissions",
+    guide:null,
+    topics:"https://www.geeksforgeeks.org/interview-experiences/ibm-interview-questions-and-answers-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/ibm/articles/" },
+
+  { name:"Infosys", type:"Service", tags:["service","mnc"], color:"ci-purple",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Infosys&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/dsa/infosys-sde-sheet-interview-questions-and-answers/",
+    topics:"https://www.geeksforgeeks.org/dsa/infosys-sde-sheet-interview-questions-and-answers/",
+    experiences:"https://www.geeksforgeeks.org/companies/infosys/articles/" },
+
+  { name:"Intuit", type:"Fintech", tags:["fintech","product"], color:"ci-orange",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Intuit&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/intuit-interview-questions-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/intuit-interview-questions-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/intuit/articles/" },
+
+  { name:"ION Group", type:"Fintech", tags:["fintech"], color:"ci-green",
+    problems:null,
+    guide:null,
+    topics:"https://www.geeksforgeeks.org/interview-experiences/ion-group-interview-questions-and-answers-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/tag/ion-group/" },
+
+  { name:"Jenkins", type:"DevOps", tags:["service"], color:"ci-red",
+    problems:null,
+    guide:null,
+    topics:"https://www.geeksforgeeks.org/devops/jenkins-interview-questions/",
+    experiences:null },
+
+  { name:"JP Morgan", type:"Fintech", tags:["fintech"], color:"ci-blue",
+    problems:null,
+    guide:"https://www.geeksforgeeks.org/interview-experiences/jp-morgan-chase-interview-questions/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/jp-morgan-interview-questions-and-answers-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/jpmorgan-chase-and-co/articles/" },
+
+  { name:"Juspay", type:"Fintech", tags:["fintech"], color:"ci-teal",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=JUSPAY&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/juspay-interview-questions-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/juspay-interview-questions-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/tag/juspay/" },
+
+  { name:"KPMG", type:"Service", tags:["service","mnc"], color:"ci-blue",
+    problems:null,
+    guide:"https://www.geeksforgeeks.org/interview-experiences/kpmg-interview-questions-and-answers-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/kpmg-interview-questions-and-answers-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/kpmg/articles/" },
+
+  { name:"MAQ Software", type:"Product", tags:["product"], color:"ci-purple",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=MAQ%20Software&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/maq-software-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/maq-software-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/tag/maq-software/?type=recent" },
+
+  { name:"Microsoft", type:"FAANG / Product", tags:["faang","product"], color:"ci-teal",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Microsoft&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/microsoft-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/microsoft-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/microsoft/articles/" },
+
+  { name:"Morgan Stanley", type:"Fintech", tags:["fintech"], color:"ci-green",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Morgan%20Stanley&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/morgan-stanley-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/morgan-stanley-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/morgan-stanley/articles/" },
+
+  { name:"Netflix", type:"FAANG / Product", tags:["faang","product"], color:"ci-red",
+    problems:null,
+    guide:"https://www.geeksforgeeks.org/dsa/netflix-sde-sheet-interview-questions-and-answers/",
+    topics:"https://www.geeksforgeeks.org/dsa/netflix-sde-sheet-interview-questions-and-answers/",
+    experiences:"https://www.geeksforgeeks.org/tag/netflix/" },
+
+  { name:"Nvidia", type:"Product", tags:["product"], color:"ci-green",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Nvidia&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/nvidia-interview-questions-and-answers-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/nvidia-interview-questions-and-answers-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/nvidia/articles/" },
+
+  { name:"OLA Cabs", type:"Product", tags:["product"], color:"ci-orange",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Ola%20Cabs&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/ola-cabs-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/ola-cabs-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/ola/articles/" },
+
+  { name:"Oracle", type:"Product / MNC", tags:["product","mnc"], color:"ci-red",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Oracle&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/oracle-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/oracle-topics-for-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/oracle/articles/" },
+
+  { name:"Paytm", type:"Fintech", tags:["fintech","product"], color:"ci-blue",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Paytm&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/paytm-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/paytm-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/paytm/articles/" },
+
+  { name:"PwC", type:"Service", tags:["service","mnc"], color:"ci-purple",
+    problems:null,
+    guide:"https://www.geeksforgeeks.org/interview-experiences/pwc-interview-questions-and-answers-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/pwc-interview-questions-and-answers-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/pwc/articles/" },
+
+  { name:"Qualcomm", type:"Product", tags:["product"], color:"ci-teal",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Qualcomm&sortBy=submissions",
+    guide:null,
+    topics:"https://www.geeksforgeeks.org/interview-experiences/qualcomm-interview-questions-and-answers-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/qualcomm/articles/" },
+
+  { name:"Salesforce", type:"Product / SaaS", tags:["product"], color:"ci-blue",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Salesforce&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/gfg-academy/salesforce-interview-questions-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/gfg-academy/salesforce-interview-questions-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/salesforce/articles/" },
+
+  { name:"Samsung", type:"Product / MNC", tags:["product","mnc"], color:"ci-blue",
+    problems:null,
+    guide:"https://www.geeksforgeeks.org/interview-experiences/samsung-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/samsung-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/samsung-electronics/articles/" },
+
+  { name:"SAP Labs", type:"Product / MNC", tags:["product","mnc"], color:"ci-orange",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=SAP%20Labs&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/sap-labs-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/sap-labs-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/sap-labs/articles/" },
+
+  { name:"Siemens", type:"MNC", tags:["mnc"], color:"ci-teal",
+    problems:null,
+    guide:"https://www.geeksforgeeks.org/interview-experiences/siemens-interview-questions-and-answers-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/siemens-interview-questions-and-answers-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/siemens/articles/" },
+
+  { name:"Synopsys", type:"Product", tags:["product"], color:"ci-purple",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Synopsys&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/synopsys-interview-questions-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/synopsys-interview-questions-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/synopsys/articles/" },
+
+  { name:"TCS", type:"Service", tags:["service","mnc"], color:"ci-blue",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=TCS&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/dsa/tcs-sde-sheet-interview-questions-and-answers/",
+    topics:"https://www.geeksforgeeks.org/dsa/tcs-sde-sheet-interview-questions-and-answers/",
+    experiences:"https://www.geeksforgeeks.org/companies/tata-consultancy-service-tcs/articles/" },
+
+  { name:"Tiger Analytics", type:"Analytics", tags:["service"], color:"ci-orange",
+    problems:null,
+    guide:"https://www.geeksforgeeks.org/interview-experiences/tiger-analytics-interview-questions-and-answers-for-technical-profiles/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/tiger-analytics-recruitment-process/",
+    experiences:"https://www.geeksforgeeks.org/companies/tiger-analytics/articles/" },
+
+  { name:"Virtusa", type:"Service", tags:["service"], color:"ci-purple",
+    problems:null,
+    guide:"https://www.geeksforgeeks.org/interview-experiences/virtusa-interview-questions/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/virtusa-interview-questions/",
+    experiences:"https://www.geeksforgeeks.org/companies/virtusa/articles/" },
+
+  { name:"Visa", type:"Fintech", tags:["fintech"], color:"ci-blue",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Visa&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/visa-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/visa-topics-for-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/visa/articles/" },
+
+  { name:"VMware", type:"Product / MNC", tags:["product","mnc"], color:"ci-teal",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=VMWare&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/vmware-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/vmware-topics-for-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/vmware/articles/" },
+
+  { name:"Walmart", type:"Product", tags:["product"], color:"ci-blue",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Walmart&sortBy=submissions",
+    guide:null,
+    topics:"https://www.geeksforgeeks.org/interview-experiences/walmart-interview-questions-for-technical-profiles/",
+    experiences:"https://www.geeksforgeeks.org/companies/walmart/articles/" },
+
+  { name:"Wipro", type:"Service", tags:["service","mnc"], color:"ci-purple",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Wipro&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/dsa/wipro-sde-sheet-interview-questions-and-answers/",
+    topics:"https://www.geeksforgeeks.org/dsa/wipro-sde-sheet-interview-questions-and-answers/",
+    experiences:"https://www.geeksforgeeks.org/companies/wipro/articles/" },
+
+  { name:"Zoho", type:"Product / SaaS", tags:["product"], color:"ci-green",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Zoho&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/zoho-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/zoho-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/companies/zoho-corporation/articles/" },
+
+  { name:"Zomato", type:"Product", tags:["product"], color:"ci-red",
+    problems:"https://www.geeksforgeeks.org/explore?page=1&company=Zomato&sortBy=submissions",
+    guide:"https://www.geeksforgeeks.org/interview-experiences/zomato-interview-preparation/",
+    topics:"https://www.geeksforgeeks.org/interview-experiences/zomato-topics-interview-preparation/",
+    experiences:"https://www.geeksforgeeks.org/tag/zomato/?type=recent" },
+];
+
+const tagClasses = { product:"tag-product", service:"tag-service", fintech:"tag-fintech", faang:"tag-faang", mnc:"tag-mnc" };
+
+function getInitials(name) {
+  return name.split(' ').slice(0,2).map(w=>w[0]).join('').toUpperCase();
+}
+
+function buildRow(c) {
+  const init = getInitials(c.name);
+  const tags = c.tags.map(t => `<span class="tag ${tagClasses[t]||''}">${t}</span>`).join('');
+  const prob = c.problems ? `<a class="link-btn link-btn-p" href="${c.problems}" target="_blank">Problems <span class="btn-arrow">↗</span></a>` : `<span class="na">—</span>`;
+  const guide = c.guide ? `<a class="link-btn link-btn-g" href="${c.guide}" target="_blank">Guide <span class="btn-arrow">↗</span></a>` : `<span class="na">—</span>`;
+  const topics = c.topics ? `<a class="link-btn link-btn-t" href="${c.topics}" target="_blank">Topics <span class="btn-arrow">↗</span></a>` : `<span class="na">—</span>`;
+  const exp = c.experiences ? `<a class="link-btn link-btn-e" href="${c.experiences}" target="_blank">Exp <span class="btn-arrow">↗</span></a>` : `<span class="na">—</span>`;
+
+  return `<tr data-name="${c.name.toLowerCase()}">
+    <td>
+      <div class="company-name">
+        <div class="company-initial ${c.color}">${init}</div>
+        <div>
+          <div class="company-title">${c.name}</div>
+          <div class="company-type">${c.type}</div>
+        </div>
+      </div>
+    </td>
+    <td><div class="tag-cell">${tags}</div></td>
+    <td>${prob}</td>
+    <td>${guide}</td>
+    <td>${topics}</td>
+    <td>${exp}</td>
+  </tr>`;
+}
+
+const tbody = document.getElementById('tableBody');
+tbody.innerHTML = companies.map(buildRow).join('');
+
+// Search
+const searchInput = document.getElementById('searchInput');
+const searchCount = document.getElementById('searchCount');
+searchCount.textContent = `${companies.length} companies`;
+
+searchInput.addEventListener('input', () => {
+  const q = searchInput.value.toLowerCase().trim();
+  const rows = tbody.querySelectorAll('tr');
+  let visible = 0;
+  rows.forEach(row => {
+    const name = row.dataset.name;
+    if (!q || name.includes(q)) {
+      row.classList.remove('hidden');
+      visible++;
+    } else {
+      row.classList.add('hidden');
+    }
+  });
+  searchCount.textContent = q ? `${visible} result${visible!==1?'s':''}` : `${companies.length} companies`;
+});
+</script>
+
+  <!-- AI CHAT HTML & JS -->
+  <button class="ai-chat-btn" id="aiChatBtn">✨</button>
+  <div class="ai-chat-window" id="aiChatWindow">
+    <div class="chat-header">
+      <span>AI Assistant</span>
+      <button class="chat-close" id="aiChatClose">✕</button>
+    </div>
+    <div class="chat-messages" id="aiChatMessages">
+      <div class="chat-message ai">Hi! I'm your AI learning assistant. Ask me anything about these companies!</div>
+    </div>
+    <form class="chat-input-area" id="aiChatForm">
+      <input type="text" class="chat-input" id="aiChatInput" placeholder="Ask a question..." required>
+      <button type="submit" class="chat-send">Send</button>
+    </form>
+  </div>
+
+  <style>
+    /* ─── AI CHATBOX CSS ─── */
+    .ai-chat-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: #00e5ff;
+      color: #0a0c0f;
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,229,255,0.4);
+      z-index: 1000;
+      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ai-chat-btn:hover { transform: scale(1.1); }
+    
+    .ai-chat-window {
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 350px;
+      height: 500px;
+      background: #111318;
+      border: 1px solid #1e2530;
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .ai-chat-window.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+    .chat-header {
+      background: #181c23;
+      padding: 15px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      border-bottom: 1px solid #1e2530;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      color: #d4dbe8;
+    }
+    .chat-close {
+      background: transparent;
+      border: none;
+      color: #6b7a94;
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .chat-close:hover { color: #d4dbe8; }
+    .chat-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 14px;
+      font-family: 'Syne', sans-serif;
+    }
+    .chat-message {
+      padding: 10px 12px;
+      border-radius: 8px;
+      max-width: 85%;
+      line-height: 1.4;
+    }
+    .chat-message.user {
+      background: rgba(0,229,255,0.1);
+      color: #f0f4ff;
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+    .chat-message.ai {
+      background: #181c23;
+      color: #d4dbe8;
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+    .chat-input-area {
+      padding: 10px;
+      background: #181c23;
+      border-top: 1px solid #1e2530;
+      display: flex;
+      gap: 10px;
+    }
+    .chat-input {
+      flex: 1;
+      background: #0a0c0f;
+      border: 1px solid #1e2530;
+      color: #d4dbe8;
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: 'Syne', sans-serif;
+    }
+    .chat-input:focus { outline: none; border-color: #00e5ff; }
+    .chat-send {
+      background: #00e5ff;
+      color: #0a0c0f;
+      border: none;
+      padding: 0 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .explain-btn {
+      background: rgba(0,229,255,0.1);
+      color: #00e5ff;
+      border: 1px solid rgba(0,229,255,0.3);
+      font-size: 10px;
+      padding: 2px 6px;
+      border-radius: 4px;
+      margin-left: 8px;
+      cursor: pointer;
+      vertical-align: middle;
+      font-family: 'Syne', sans-serif;
+    }
+    .explain-btn:hover {
+      background: rgba(0,229,255,0.2);
+    }
+  </style>
+
+  <script>
+    // AI Chat Logic
+    const aiChatBtn = document.getElementById('aiChatBtn');
+    const aiChatWindow = document.getElementById('aiChatWindow');
+    const aiChatClose = document.getElementById('aiChatClose');
+    const aiChatForm = document.getElementById('aiChatForm');
+    const aiChatInput = document.getElementById('aiChatInput');
+    const aiChatMessages = document.getElementById('aiChatMessages');
+    
+    let aiCurrentContext = "Company interview preparation";
+
+    aiChatBtn.addEventListener('click', () => {
+      aiChatWindow.classList.add('open');
+      aiChatInput.focus();
+    });
+
+    aiChatClose.addEventListener('click', () => {
+      aiChatWindow.classList.remove('open');
+    });
+
+    function aiAppendMessage(text, sender) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `chat-message ${sender}`;
+      msgDiv.innerHTML = text.replace(/\n/g, '<br>');
+      aiChatMessages.appendChild(msgDiv);
+      aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+    }
+
+    async function sendAiChatMessage(prompt, context) {
+      aiAppendMessage(prompt, 'user');
+      const tempId = Date.now();
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'chat-message ai';
+      loadingDiv.id = `loading-${tempId}`;
+      loadingDiv.innerText = 'Thinking...';
+      aiChatMessages.appendChild(loadingDiv);
+      aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+
+      try {
+        const response = await fetch('http://localhost:5000/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, context })
+        });
+        const data = await response.json();
+        const loadingEl = document.getElementById(`loading-${tempId}`);
+        if(loadingEl) loadingEl.remove();
+        
+        if (response.ok && data.success) {
+          aiAppendMessage(data.response, 'ai');
+        } else {
+          aiAppendMessage("Sorry, I encountered an error: " + (data.message || "Unknown error"), 'ai');
+        }
+      } catch (e) {
+        const loadingEl = document.getElementById(`loading-${tempId}`);
+        if(loadingEl) loadingEl.remove();
+        aiAppendMessage("Failed to connect to AI server.", 'ai');
+      }
+    }
+
+    aiChatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const prompt = aiChatInput.value.trim();
+      if (!prompt) return;
+      aiChatInput.value = '';
+      sendAiChatMessage(prompt, aiCurrentContext);
+    });
+
+    // Add Explain buttons to company titles after a short delay so table is populated
+    setTimeout(() => {
+      document.querySelectorAll('.company-title').forEach(title => {
+        const btn = document.createElement('button');
+        btn.className = 'explain-btn';
+        btn.innerText = '✨ Tips';
+        btn.onclick = (event) => {
+          event.preventDefault();
+          const company = title.innerText.replace('✨ Tips', '').trim();
+          aiCurrentContext = `User is preparing for ${company} interviews.`;
+          aiChatWindow.classList.add('open');
+          sendAiChatMessage(`Can you give me the top 3 interview preparation tips for ${company}?`, aiCurrentContext);
+        };
+        title.appendChild(btn);
+      });
+    }, 500);
+
+    // Auth Check
+    document.addEventListener("DOMContentLoaded", () => {
+      const userStr = localStorage.getItem('syntaxSphereUser');
+      if (!userStr) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      try {
+        const user = JSON.parse(userStr);
+        const name = user.username || 'Developer';
+        const init = name.slice(0, 2).toUpperCase();
+        
+        document.getElementById('userProfile').style.display = 'flex';
+        document.getElementById('userNameDisplay').textContent = name;
+        document.getElementById('userAvatar').textContent = init;
+      } catch (e) {
+        console.error("Error parsing user data", e);
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem('syntaxSphereUser');
+      window.location.href = 'syntax-sphere.html';
+    }
+  </script>
+</body>
+</html>

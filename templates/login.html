@@ -1,0 +1,676 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>syntaxsphere - Login</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css" rel="stylesheet">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #7458f1;
+            --primary-dark: #233c63;
+            --secondary: #5764d5;
+            --bg-dark: #030303;
+            --bg-card: #46556d;
+            --border: #334155;
+            --text-primary: #f1f5f9;
+            --text-secondary: #8d9db0;
+            --accent: #06b6d4;
+        }
+
+        html, body {
+            width: 100%;
+            height: 100%;
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', 'Roboto', 'Oxygen', 'Ubuntu', 'Cantarell', sans-serif;
+        }
+
+        body {
+            background: linear-gradient(135deg, var(--bg-dark) 0%, #1a1f3a 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            min-height: 100vh;
+            padding: 20px;
+            position: relative;
+            overflow: hidden;
+        }
+
+        /* Background animated elements */
+        .bg-blob {
+            position: absolute;
+            border-radius: 50%;
+            filter: blur(60px);
+            opacity: 0.1;
+            animation: float 20s ease-in-out infinite;
+        }
+
+        .blob-1 {
+            width: 400px;
+            height: 400px;
+            background: var(--primary);
+            top: -100px;
+            left: -100px;
+            animation-delay: 0s;
+        }
+
+        .blob-2 {
+            width: 350px;
+            height: 350px;
+            background: var(--secondary);
+            bottom: -150px;
+            right: -150px;
+            animation-delay: 3s;
+        }
+
+        .blob-3 {
+            width: 300px;
+            height: 300px;
+            background: var(--accent);
+            top: 50%;
+            right: 5%;
+            animation-delay: 6s;
+        }
+
+        @keyframes float {
+            0%, 100% {
+                transform: translate(0, 0);
+            }
+            33% {
+                transform: translate(30px, -30px);
+            }
+            66% {
+                transform: translate(-20px, 30px);
+            }
+        }
+
+        .container {
+            width: 100%;
+            max-width: 420px;
+            position: relative;
+            z-index: 10;
+        }
+
+        /* Header */
+        .header {
+            text-align: center;
+            margin-bottom: 40px;
+            animation: slideDown 0.8s ease-out;
+        }
+
+        .logo {
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 16px;
+            margin-top: 65px;
+        }
+        
+        .logo-icon {
+            font-size: 32px;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        
+        .logo-text {
+            font-size: 28px;
+            font-weight: 700;
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+            margin-top: 65px;
+            
+        }
+
+        .tagline {
+            color: var(--text-secondary);
+            font-size: 14px;
+            margin-top: 8px;
+        }
+
+        /* Card */
+        .login-card {
+            background: rgba(30, 31, 78, 0.8);
+            backdrop-filter: blur(10px);
+            border: 1px solid rgba(51, 65, 85, 0.5);
+            border-radius: 20px;
+            padding: 40px;
+            box-shadow: 0 25px 50px rgba(0, 0, 0, 0.3);
+            animation: slideUp 0.8s ease-out;
+        }
+
+        /* Tabs */
+        .tabs {
+            display: flex;
+            gap: 12px;
+            margin-bottom: 30px;
+            background: rgba(51, 65, 85, 0.2);
+            padding: 6px;
+            border-radius: 12px;
+        }
+
+        .tab {
+            flex: 1;
+            padding: 10px 16px;
+            border: none;
+            background: transparent;
+            color: var(--text-secondary);
+            font-weight: 600;
+            font-size: 14px;
+            cursor: pointer;
+            border-radius: 10px;
+            transition: all 0.3s ease;
+            position: relative;
+        }
+
+        .tab.active {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .tab:hover:not(.active) {
+            color: var(--text-primary);
+            background: rgba(51, 65, 85, 0.3);
+        }
+
+        /* Form */
+        .form-group {
+            margin-bottom: 20px;
+        }
+
+        .form-group label {
+            display: block;
+            color: var(--text-primary);
+            font-weight: 500;
+            margin-bottom: 8px;
+            font-size: 14px;
+        }
+
+        .input-wrapper {
+            position: relative;
+            display: flex;
+            align-items: center;
+        }
+
+        .input-icon {
+            position: absolute;
+            left: 14px;
+            color: var(--text-secondary);
+            font-size: 16px;
+            pointer-events: none;
+            transition: color 0.3s ease;
+        }
+
+        input {
+            width: 100%;
+            background: rgba(51, 65, 85, 0.3);
+            border: 1.5px solid var(--border);
+            border-radius: 12px;
+            padding: 12px 12px 12px 44px;
+            color: var(--text-primary);
+            font-size: 14px;
+            transition: all 0.3s ease;
+        }
+
+        input::placeholder {
+            color: var(--text-secondary);
+        }
+
+        input:focus {
+            outline: none;
+            background: rgba(51, 65, 85, 0.5);
+            border-color: var(--primary);
+            box-shadow: 0 0 0 3px rgba(59, 130, 246, 0.1);
+        }
+
+        input:focus + .input-icon {
+            color: var(--primary);
+        }
+
+        .password-toggle {
+            position: absolute;
+            right: 14px;
+            background: none;
+            border: none;
+            color: var(--text-secondary);
+            cursor: pointer;
+            font-size: 16px;
+            transition: color 0.3s ease;
+            padding: 0;
+        }
+
+        .password-toggle:hover {
+            color: var(--primary);
+        }
+
+        /* Remember & Forgot */
+        .form-footer {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin: 16px 0 24px;
+            font-size: 13px;
+        }
+
+        .remember-me {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            cursor: pointer;
+            color: var(--text-secondary);
+            transition: color 0.3s ease;
+        }
+
+        .remember-me input {
+            width: auto;
+            margin: 0;
+            padding: 0;
+            cursor: pointer;
+        }
+
+        .remember-me:hover {
+            color: var(--text-primary);
+        }
+
+        .forgot-password {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .forgot-password:hover {
+            color: var(--accent);
+        }
+
+        /* Buttons */
+        .btn {
+            width: 100%;
+            padding: 12px 16px;
+            border: none;
+            border-radius: 12px;
+            font-size: 15px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+        }
+
+        .btn-primary {
+            background: linear-gradient(135deg, var(--primary), var(--secondary));
+            color: white;
+            margin-bottom: 16px;
+            box-shadow: 0 8px 20px rgba(59, 130, 246, 0.3);
+        }
+
+        .btn-primary:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 12px 30px rgba(59, 130, 246, 0.4);
+        }
+
+        .btn-primary:active {
+            transform: translateY(0);
+        }
+
+        .btn-primary.loading {
+            opacity: 0.7;
+            pointer-events: none;
+        }
+
+        .spinner {
+            width: 16px;
+            height: 16px;
+            border: 2px solid rgba(255, 255, 255, 0.3);
+            border-top-color: white;
+            border-radius: 50%;
+            animation: spin 0.8s linear infinite;
+        }
+
+        @keyframes spin {
+            to {
+                transform: rotate(360deg);
+            }
+        }
+
+        .btn-secondary {
+            background: rgba(51, 65, 85, 0.3);
+            color: var(--text-secondary);
+            border: 1.5px solid var(--border);
+        }
+
+        .btn-secondary:hover {
+            background: rgba(51, 65, 85, 0.5);
+            color: var(--text-primary);
+            border-color: var(--primary);
+        }
+
+        /* Divider */
+        .divider {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            margin: 24px 0;
+        }
+
+        .divider-line {
+            flex: 1;
+            height: 1px;
+            background: var(--border);
+        }
+
+        .divider-text {
+            color: var(--text-secondary);
+            font-size: 12px;
+            font-weight: 500;
+        }
+
+        /* Footer */
+        .login-footer {
+            text-align: center;
+            margin-top: 24px;
+            font-size: 13px;
+            color: var(--text-secondary);
+        }
+
+        .login-footer a {
+            color: var(--primary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .login-footer a:hover {
+            color: var(--accent);
+        }
+
+        .signup-link {
+            margin-top: 16px;
+        }
+
+        .signup-link a {
+            font-weight: 600;
+        }
+
+        /* Terms & Footer */
+        .bottom-footer {
+            text-align: center;
+            margin-top: 32px;
+            font-size: 12px;
+            color: var(--text-secondary);
+        }
+
+        .bottom-footer a {
+            color: var(--text-secondary);
+            text-decoration: none;
+            transition: color 0.3s ease;
+        }
+
+        .bottom-footer a:hover {
+            color: var(--primary);
+        }
+
+        /* Animations */
+        @keyframes slideDown {
+            from {
+                opacity: 0;
+                transform: translateY(-20px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        @keyframes slideUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        /* Responsive */
+        @media (max-width: 480px) {
+            .login-card {
+                padding: 30px 20px;
+            }
+
+            .logo-text {
+                font-size: 24px;
+            }
+
+            .header {
+                margin-bottom: 30px;
+            }
+        }
+    </style>
+</head>
+<body>
+    <!-- Background elements -->
+    <div class="bg-blob blob-1"></div>
+    <div class="bg-blob blob-2"></div>
+    <div class="bg-blob blob-3"></div>
+
+    <!-- Main container -->
+    <div class="container">
+        <!-- Header -->
+        <div class="header">
+            <div class="logo">
+                <!-- <i class="fas fa-code logo-icon"></i> -->
+                <span class="logo-text">syntaxsphere</span>
+            </div>
+            <p class="tagline">Master your coding skills faster</p>
+        </div>
+
+        <!-- Login Card -->
+        <div class="login-card">
+            <!-- Tabs -->
+            <div class="tabs">
+                <button class="tab active" data-tab="login">
+                    <i class="fas fa-sign-in-alt"></i> Login
+                </button>
+                <button class="tab" data-tab="signup">
+                    <i class="fas fa-user-plus"></i> Sign Up
+                </button>
+            </div>
+
+            <!-- Login Form -->
+            <form id="loginForm" class="auth-form">
+                <!-- Email -->
+                <div class="form-group">
+                    <label for="email">Email Address</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="email" 
+                            id="email" 
+                            placeholder="your@email.com" 
+                            required
+                        >
+                        <i class="fas fa-envelope input-icon"></i>
+                    </div>
+                </div>
+
+                <!-- Password -->
+                <div class="form-group">
+                    <label for="password">Password</label>
+                    <div class="input-wrapper">
+                        <input 
+                            type="password" 
+                            id="password" 
+                            placeholder="Enter your password" 
+                            required
+                        >
+                        <i class="fas fa-lock input-icon"></i>
+                        <button 
+                            type="button" 
+                            class="password-toggle" 
+                            id="passwordToggle"
+                            aria-label="Toggle password visibility"
+                        >
+                            <i class="fas fa-eye"></i>
+                        </button>
+                    </div>
+                </div>
+
+                <!-- Remember & Forgot -->
+                <div class="form-footer">
+                    <label class="remember-me">
+                        <input type="checkbox" id="rememberMe">
+                        Remember me
+                    </label>
+                    <a href="#" class="forgot-password">Forgot password?</a>
+                </div>
+
+                <!-- Submit Button -->
+                <button type="submit" class="btn btn-primary" id="submitBtn">
+                    <span>Sign In</span>
+                </button>
+            </form>
+
+            <!-- Sign Up Link -->
+            <div class="login-footer">
+                <p id="authToggleText">Don't have an account? <a href="#" id="authToggleLink" data-mode="signup">Sign up</a></p>
+            </div>
+        </div>
+
+        <!-- Bottom Footer -->
+        <div class="bottom-footer">
+            <p>By signing in, you agree to our <a href="#">Terms of Service</a> & <a href="#">Privacy Policy</a></p>
+            <p>© 2024 CodeHub. All rights reserved.</p>
+        </div>
+    </div>
+
+    <script>
+        // If already logged in, redirect to app
+        if (localStorage.getItem('syntaxSphereUser')) {
+            window.location.href = '/app';
+        }
+
+        // Tab switching
+        const tabs = document.querySelectorAll('.tab');
+        const loginForm = document.getElementById('loginForm');
+        const authToggleText = document.getElementById('authToggleText');
+        let authToggleLink = document.getElementById('authToggleLink');
+        let currentTab = 'login';
+
+        tabs.forEach(tab => {
+            tab.addEventListener('click', () => {
+                tabs.forEach(t => t.classList.remove('active'));
+                tab.classList.add('active');
+                currentTab = tab.dataset.tab;
+                updateAuthText();
+            });
+        });
+
+        // Auth toggle via link
+        authToggleLink.addEventListener('click', (e) => {
+            e.preventDefault();
+            const newTab = authToggleLink.dataset.mode === 'signup' ? 'signup' : 'login';
+            const tabBtn = document.querySelector(`.tab[data-tab="${newTab}"]`);
+            tabs.forEach(t => t.classList.remove('active'));
+            tabBtn.classList.add('active');
+            currentTab = newTab;
+            updateAuthText();
+        });
+
+        function updateAuthText() {
+            const submitBtnEl = document.getElementById('submitBtn');
+            if (currentTab === 'login') {
+                authToggleText.innerHTML = `Don't have an account? <a href="#" id="authToggleLink" data-mode="signup">Sign up</a>`;
+                submitBtnEl.innerHTML = '<span>Sign In</span>';
+            } else {
+                authToggleText.innerHTML = `Already have an account? <a href="#" id="authToggleLink" data-mode="login">Sign in</a>`;
+                submitBtnEl.innerHTML = '<span>Sign Up</span>';
+            }
+            authToggleLink = document.getElementById('authToggleLink');
+            authToggleLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                const newTab = authToggleLink.dataset.mode === 'signup' ? 'signup' : 'login';
+                const tabBtn = document.querySelector(`.tab[data-tab="${newTab}"]`);
+                tabs.forEach(t => t.classList.remove('active'));
+                tabBtn.classList.add('active');
+                currentTab = newTab;
+                updateAuthText();
+            });
+        }
+
+        // Password toggle
+        const passwordInput = document.getElementById('password');
+        const passwordToggle = document.getElementById('passwordToggle');
+
+        passwordToggle.addEventListener('click', () => {
+            const isPassword = passwordInput.type === 'password';
+            passwordInput.type = isPassword ? 'text' : 'password';
+            passwordToggle.innerHTML = isPassword 
+                ? '<i class="fas fa-eye-slash"></i>' 
+                : '<i class="fas fa-eye"></i>';
+        });
+
+        // Form submission
+        const submitBtn = document.getElementById('submitBtn');
+        loginForm.addEventListener('submit', async (e) => {
+            e.preventDefault();
+            
+            const email = document.getElementById('email').value;
+            const password = document.getElementById('password').value;
+            const isSignup = currentTab === 'signup';
+            const endpoint = isSignup ? '/auth/signup' : '/auth/login';
+
+            // Show loading state
+            submitBtn.classList.add('loading');
+            submitBtn.innerHTML = `<div class="spinner"></div><span>${isSignup ? 'Signing up...' : 'Signing in...'}</span>`;
+
+            try {
+                const response = await fetch(endpoint, {
+                    method: 'POST',
+                    headers: { 'Content-Type': 'application/json' },
+                    body: JSON.stringify({ email, password })
+                });
+                
+                const data = await response.json();
+                
+                if (response.ok && data.success) {
+                    alert(data.message);
+                    if (!isSignup) {
+                        if (data.user) {
+                            localStorage.setItem('syntaxSphereUser', JSON.stringify(data.user));
+                        }
+                        window.location.href = '/app';
+                    } else {
+                        // Switch to login tab after successful signup
+                        const tabBtn = document.querySelector(`.tab[data-tab="login"]`);
+                        tabs.forEach(t => t.classList.remove('active'));
+                        tabBtn.classList.add('active');
+                        currentTab = 'login';
+                        updateAuthText();
+                    }
+                } else {
+                    alert(data.message || 'Authentication failed');
+                }
+            } catch (err) {
+                console.error('API Error:', err);
+                alert('Failed to connect to the backend server.');
+            } finally {
+                // Reset button
+                submitBtn.classList.remove('loading');
+                submitBtn.innerHTML = `<span>${isSignup ? 'Sign Up' : 'Sign In'}</span>`;
+            }
+        });
+    </script>
+</body>
+</html>

@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Syntax Spear — Data Structures</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=JetBrains+Mono:wght@300;400;500;600&family=Crimson+Pro:ital,wght@0,300;0,400;1,300;1,400&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #0a0c0f;
+    --bg2: #111318;
+    --bg3: #181c23;
+    --border: #1e2530;
+    --accent: #00e5ff;
+    --accent2: #ff6b35;
+    --accent3: #a78bfa;
+    --text: #d4dbe8;
+    --text-dim: #6b7a94;
+    --text-bright: #f0f4ff;
+    --code-bg: #0d1117;
+    --code-border: #21262d;
+    --green: #3fb950;
+    --yellow: #e3b341;
+    --red: #f85149;
+    --sidebar-w: 280px;
+  }
+
+  * { margin: 0; padding: 0; box-sizing: border-box; }
+
+  html { scroll-behavior: smooth; }
+
+  body {
+    background: var(--bg);
+    color: var(--text);
+    font-family: 'Crimson Pro', Georgia, serif;
+    font-size: 17px;
+    line-height: 1.75;
+    overflow-x: hidden;
+  }
+
+  /* ─── NOISE TEXTURE OVERLAY ─── */
+  body::before {
+    content: '';
+    position: fixed;
+    inset: 0;
+    background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.03'/%3E%3C/svg%3E");
+    pointer-events: none;
+    z-index: 9999;
+    opacity: 0.4;
+  }
+
+  /* ─── HEADER ─── */
+  header {
+    position: fixed;
+    top: 0; left: 0; right: 0;
+    z-index: 100;
+    background: rgba(10,12,15,0.92);
+    backdrop-filter: blur(16px);
+    border-bottom: 1px solid var(--border);
+    display: flex;
+    align-items: center;
+    gap: 0;
+    height: 56px;
+    padding: 0;
+  }
+
+  .logo-block {
+    width: var(--sidebar-w);
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    border-right: 1px solid var(--border);
+    height: 100%;
+    flex-shrink: 0;
+  }
+
+  .logo-icon {
+    width: 28px;
+    height: 28px;
+    background: var(--accent);
+    clip-path: polygon(50% 0%, 100% 100%, 0% 100%);
+    flex-shrink: 0;
+    animation: pulse-glow 3s ease-in-out infinite;
+  }
+
+  @keyframes pulse-glow {
+    0%, 100% { filter: drop-shadow(0 0 4px var(--accent)); }
+    50% { filter: drop-shadow(0 0 12px var(--accent)); }
+  }
+
+  .logo-text {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 16px;
+    letter-spacing: -0.02em;
+    color: var(--text-bright);
+  }
+  .logo-text span { color: var(--accent); }
+
+  .header-nav {
+    display: flex;
+    align-items: center;
+    gap: 4px;
+    padding: 0 24px;
+    flex: 1;
+  }
+
+  .header-nav a {
+    font-family: 'Syne', sans-serif;
+    font-size: 12px;
+    font-weight: 600;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 4px 10px;
+    border-radius: 4px;
+    transition: all 0.2s;
+  }
+  .header-nav a:hover, .header-nav a.active {
+    color: var(--accent);
+    background: rgba(0,229,255,0.08);
+  }
+
+  .header-right {
+    padding: 0 24px;
+    display: flex;
+    align-items: center;
+    gap: 12px;
+  }
+
+  .version-badge {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 11px;
+    color: var(--accent2);
+    border: 1px solid rgba(255,107,53,0.3);
+    padding: 2px 8px;
+    border-radius: 3px;
+    background: rgba(255,107,53,0.07);
+  }
+
+  /* ─── LAYOUT ─── */
+  .layout {
+    display: flex;
+    padding-top: 56px;
+    min-height: 100vh;
+  }
+
+  /* ─── SIDEBAR ─── */
+  aside {
+    width: var(--sidebar-w);
+    flex-shrink: 0;
+    position: fixed;
+    top: 56px;
+    bottom: 0;
+    left: 0;
+    overflow-y: auto;
+    border-right: 1px solid var(--border);
+    background: var(--bg2);
+    padding: 24px 0;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  aside::-webkit-scrollbar { width: 4px; }
+  aside::-webkit-scrollbar-thumb { background: var(--border); border-radius: 2px; }
+
+  .sidebar-section {
+    margin-bottom: 24px;
+  }
+
+  .sidebar-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    padding: 0 20px 8px;
+    display: block;
+  }
+
+  .sidebar-link {
+    display: block;
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 12.5px;
+    color: var(--text-dim);
+    text-decoration: none;
+    padding: 5px 20px 5px 28px;
+    border-left: 2px solid transparent;
+    transition: all 0.15s;
+    position: relative;
+  }
+
+  .sidebar-link:hover {
+    color: var(--text);
+    background: rgba(255,255,255,0.03);
+    border-left-color: var(--border);
+  }
+
+  .sidebar-link.active {
+    color: var(--accent);
+    border-left-color: var(--accent);
+    background: rgba(0,229,255,0.05);
+  }
+
+  .sidebar-link .num {
+    color: var(--text-dim);
+    margin-right: 6px;
+    font-size: 11px;
+  }
+
+  .sidebar-sub {
+    padding-left: 40px;
+    font-size: 12px;
+  }
+
+  /* ─── MAIN CONTENT ─── */
+  main {
+    margin-left: var(--sidebar-w);
+    flex: 1;
+    padding: 60px 80px 120px;
+    max-width: 980px;
+  }
+
+  /* ─── CHAPTER HEADER ─── */
+  .chapter-header {
+    margin-bottom: 64px;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--border);
+    animation: fadeUp 0.6s ease both;
+  }
+
+  @keyframes fadeUp {
+    from { opacity: 0; transform: translateY(16px); }
+    to { opacity: 1; transform: translateY(0); }
+  }
+
+  .chapter-label {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.18em;
+    text-transform: uppercase;
+    color: var(--accent);
+    margin-bottom: 16px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .chapter-label::after {
+    content: '';
+    flex: 1;
+    height: 1px;
+    background: linear-gradient(to right, rgba(0,229,255,0.3), transparent);
+  }
+
+  h1 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 800;
+    font-size: 3.2rem;
+    line-height: 1.05;
+    letter-spacing: -0.03em;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+  }
+
+  h1 .chapter-num {
+    color: var(--text-dim);
+    font-weight: 400;
+    font-size: 2.4rem;
+  }
+
+  .chapter-desc {
+    font-size: 1.15rem;
+    color: var(--text-dim);
+    max-width: 640px;
+    font-style: italic;
+  }
+
+  /* ─── SECTION HEADINGS ─── */
+  .section {
+    margin-bottom: 72px;
+    animation: fadeUp 0.5s ease both;
+  }
+
+  h2 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 700;
+    font-size: 1.6rem;
+    letter-spacing: -0.02em;
+    color: var(--text-bright);
+    margin-bottom: 20px;
+    padding-top: 56px;
+    display: flex;
+    align-items: baseline;
+    gap: 12px;
+  }
+
+  h2 .sec-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--accent);
+    font-weight: 400;
+    letter-spacing: 0;
+  }
+
+  h2 .anchor {
+    font-size: 0.9rem;
+    color: var(--text-dim);
+    opacity: 0;
+    text-decoration: none;
+    transition: opacity 0.2s;
+  }
+
+  h2:hover .anchor { opacity: 1; }
+
+  h3 {
+    font-family: 'Syne', sans-serif;
+    font-weight: 600;
+    font-size: 1.15rem;
+    color: var(--text-bright);
+    margin: 40px 0 16px;
+    padding-left: 16px;
+    border-left: 3px solid var(--accent2);
+  }
+
+  h3 .sec-num {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.8rem;
+    color: var(--accent2);
+    font-weight: 400;
+    margin-right: 6px;
+  }
+
+  /* ─── PROSE ─── */
+  p {
+    margin-bottom: 18px;
+    color: var(--text);
+  }
+
+  a { color: var(--accent); text-decoration: none; border-bottom: 1px solid rgba(0,229,255,0.25); transition: all 0.15s; }
+  a:hover { color: var(--text-bright); border-bottom-color: var(--text-bright); }
+
+  /* ─── INLINE CODE ─── */
+  code {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82em;
+    background: rgba(0,229,255,0.07);
+    color: var(--accent);
+    padding: 1px 6px;
+    border-radius: 3px;
+    border: 1px solid rgba(0,229,255,0.15);
+  }
+
+  /* ─── CODE BLOCKS ─── */
+  .code-block {
+    margin: 28px 0;
+    border-radius: 8px;
+    overflow: hidden;
+    border: 1px solid var(--code-border);
+    background: var(--code-bg);
+    position: relative;
+  }
+
+  .code-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 10px 16px;
+    background: #161b22;
+    border-bottom: 1px solid var(--code-border);
+  }
+
+  .code-lang {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .code-dots {
+    display: flex;
+    gap: 6px;
+  }
+
+  .code-dot {
+    width: 10px;
+    height: 10px;
+    border-radius: 50%;
+  }
+
+  .dot-r { background: var(--red); }
+  .dot-y { background: var(--yellow); }
+  .dot-g { background: var(--green); }
+
+  .code-copy {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 10px;
+    color: var(--text-dim);
+    background: none;
+    border: 1px solid var(--border);
+    padding: 2px 8px;
+    border-radius: 3px;
+    cursor: pointer;
+    transition: all 0.2s;
+  }
+  .code-copy:hover { color: var(--accent); border-color: var(--accent); }
+
+  pre {
+    padding: 20px;
+    overflow-x: auto;
+    scrollbar-width: thin;
+    scrollbar-color: var(--border) transparent;
+  }
+
+  pre code {
+    background: none;
+    border: none;
+    padding: 0;
+    font-size: 0.875rem;
+    line-height: 1.7;
+    color: var(--text);
+  }
+
+  /* Syntax colors */
+  .kw { color: #ff79c6; }
+  .fn { color: #50fa7b; }
+  .st { color: #f1fa8c; }
+  .cm { color: #6272a4; font-style: italic; }
+  .nm { color: #bd93f9; }
+  .op { color: #ff79c6; }
+  .bi { color: #8be9fd; }
+  .num-lit { color: #ff9944; }
+  .prompt { color: var(--text-dim); user-select: none; }
+  .out { color: #6b7a94; }
+
+  /* ─── METHOD TABLE ─── */
+  .method-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 0.9rem;
+  }
+
+  .method-table th {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    text-align: left;
+    padding: 10px 16px;
+    border-bottom: 2px solid var(--border);
+    background: var(--bg3);
+  }
+
+  .method-table td {
+    padding: 12px 16px;
+    border-bottom: 1px solid var(--border);
+    vertical-align: top;
+  }
+
+  .method-table tr:hover td { background: rgba(255,255,255,0.02); }
+
+  .method-table .method-name {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--green);
+    white-space: nowrap;
+  }
+
+  .method-table .method-sig {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--text-dim);
+  }
+
+  .method-table .method-desc {
+    color: var(--text);
+    font-size: 0.9rem;
+  }
+
+  .method-table .complexity {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.78rem;
+    color: var(--accent3);
+    white-space: nowrap;
+  }
+
+  /* ─── CALLOUTS ─── */
+  .callout {
+    margin: 28px 0;
+    padding: 18px 22px;
+    border-radius: 6px;
+    border-left: 4px solid;
+    background: var(--bg3);
+    font-size: 0.95rem;
+  }
+
+  .callout-note { border-color: var(--accent); background: rgba(0,229,255,0.05); }
+  .callout-warn { border-color: var(--yellow); background: rgba(227,179,65,0.05); }
+  .callout-perf { border-color: var(--accent2); background: rgba(255,107,53,0.05); }
+  .callout-tip  { border-color: var(--green); background: rgba(63,185,80,0.05); }
+
+  .callout-title {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    margin-bottom: 8px;
+  }
+
+  .callout-note .callout-title { color: var(--accent); }
+  .callout-warn .callout-title { color: var(--yellow); }
+  .callout-perf .callout-title { color: var(--accent2); }
+  .callout-tip .callout-title { color: var(--green); }
+
+  /* ─── COMPLEXITY GRID ─── */
+  .complexity-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+    gap: 12px;
+    margin: 24px 0;
+  }
+
+  .complexity-card {
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    padding: 16px;
+    transition: border-color 0.2s, transform 0.2s;
+  }
+
+  .complexity-card:hover {
+    border-color: var(--accent);
+    transform: translateY(-2px);
+  }
+
+  .cc-op {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.82rem;
+    color: var(--text-dim);
+    margin-bottom: 6px;
+  }
+
+  .cc-val {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 1.2rem;
+    font-weight: 600;
+    color: var(--accent3);
+  }
+
+  .cc-desc {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+    margin-top: 4px;
+  }
+
+  /* ─── DEFINITION LIST ─── */
+  .def-list { margin: 20px 0; }
+
+  .def-item {
+    margin-bottom: 20px;
+    padding: 16px 18px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    transition: border-color 0.2s;
+  }
+
+  .def-item:hover { border-color: rgba(0,229,255,0.25); }
+
+  .def-term {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.9rem;
+    color: var(--green);
+    margin-bottom: 8px;
+    display: flex;
+    align-items: center;
+    gap: 10px;
+  }
+
+  .def-term .complexity-tag {
+    font-size: 0.72rem;
+    color: var(--accent3);
+    background: rgba(167,139,250,0.1);
+    border: 1px solid rgba(167,139,250,0.25);
+    padding: 1px 6px;
+    border-radius: 3px;
+  }
+
+  .def-body { color: var(--text); font-size: 0.95rem; }
+
+  /* ─── COMPARISON TABLE ─── */
+  .cmp-table {
+    width: 100%;
+    border-collapse: collapse;
+    margin: 24px 0;
+    font-size: 0.875rem;
+  }
+
+  .cmp-table th {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.1em;
+    text-transform: uppercase;
+    padding: 12px 16px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    color: var(--text-dim);
+  }
+
+  .cmp-table td {
+    padding: 11px 16px;
+    border: 1px solid var(--border);
+    vertical-align: middle;
+  }
+
+  .cmp-table tr:nth-child(even) td { background: rgba(255,255,255,0.015); }
+
+  .cmp-yes { color: var(--green); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+  .cmp-no { color: var(--red); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+  .cmp-maybe { color: var(--yellow); font-family: 'JetBrains Mono', monospace; font-size: 0.85rem; }
+
+  /* ─── DIVIDER ─── */
+  .divider {
+    height: 1px;
+    background: linear-gradient(to right, transparent, var(--border), transparent);
+    margin: 64px 0;
+  }
+
+  /* ─── FOOTNOTES ─── */
+  .footnotes {
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    font-size: 0.85rem;
+    color: var(--text-dim);
+  }
+
+  .footnotes h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.15em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 16px;
+  }
+
+  /* ─── NAV ARROWS ─── */
+  .chapter-nav {
+    display: flex;
+    justify-content: space-between;
+    margin-top: 80px;
+    padding-top: 32px;
+    border-top: 1px solid var(--border);
+    gap: 16px;
+  }
+
+  .nav-btn {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    padding: 16px 20px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 6px;
+    text-decoration: none;
+    transition: all 0.2s;
+    min-width: 180px;
+    color: inherit;
+  }
+
+  .nav-btn:hover {
+    border-color: var(--accent);
+    background: rgba(0,229,255,0.04);
+    color: inherit;
+  }
+
+  .nav-btn .dir {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+  }
+
+  .nav-btn .title {
+    font-family: 'JetBrains Mono', monospace;
+    font-size: 0.85rem;
+    color: var(--text-bright);
+    border-bottom: none;
+  }
+
+  .nav-btn.next { text-align: right; }
+
+  /* ─── SCROLLBAR ─── */
+  ::-webkit-scrollbar { width: 6px; }
+  ::-webkit-scrollbar-track { background: var(--bg); }
+  ::-webkit-scrollbar-thumb { background: var(--border); border-radius: 3px; }
+
+  /* ─── TOC FLOATING ─── */
+  .toc-inline {
+    float: right;
+    margin: 0 0 32px 40px;
+    padding: 20px 22px;
+    background: var(--bg3);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    min-width: 220px;
+    font-size: 0.85rem;
+  }
+
+  .toc-inline h4 {
+    font-family: 'Syne', sans-serif;
+    font-size: 10px;
+    font-weight: 700;
+    letter-spacing: 0.14em;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 12px;
+  }
+
+  .toc-inline ol { padding-left: 18px; }
+  .toc-inline li { margin-bottom: 5px; }
+  .toc-inline a { color: var(--text-dim); border-bottom: none; font-family: 'JetBrains Mono', monospace; font-size: 0.8rem; }
+  .toc-inline a:hover { color: var(--accent); }
+
+  ul, ol { padding-left: 24px; margin-bottom: 18px; }
+  li { margin-bottom: 6px; }
+
+  strong { color: var(--text-bright); font-weight: 600; }
+  em { color: var(--text-dim); }
+
+  @media (max-width: 1100px) {
+    main { padding: 48px 48px 80px; }
+  }
+
+  @media (max-width: 800px) {
+    aside { display: none; }
+    main { margin-left: 0; padding: 32px 24px 64px; }
+    h1 { font-size: 2.2rem; }
+    .toc-inline { float: none; margin: 0 0 32px; width: 100%; }
+  }
+</style>
+</head>
+<body>
+
+<header>
+  <div class="logo-block">
+    <div class="logo-icon"></div>
+    <span class="logo-text">Syntax<span>Spear</span></span>
+  </div>
+  <nav class="header-nav">
+    <a href="#">Tutorial</a>
+    <a href="#" class="active">Data Structures</a>
+    <a href="#">Collections</a>
+    <a href="#">Algorithms</a>
+    <a href="#">Reference</a>
+  </nav>
+  <div class="header-right">
+    <div class="user-profile" id="userProfile" style="display: none; align-items: center; gap: 10px;">
+      <div id="userAvatar" style="width: 32px; height: 32px; border-radius: 50%; background: linear-gradient(135deg, var(--accent), var(--accent2)); display: flex; align-items: center; justify-content: center; font-size: 0.75rem; font-weight: 800; color: #fff;"></div>
+      <div style="display: flex; flex-direction: column;">
+        <span id="userNameDisplay" style="font-size: 0.8rem; font-weight: 700; color: var(--text-bright);"></span>
+        <button onclick="logout()" style="background: transparent; border: none; color: var(--red); font-size: 0.7rem; font-weight: 600; cursor: pointer; text-align: left; padding: 0;">Log Out</button>
+      </div>
+    </div>
+    <span class="version-badge" id="versionBadge">Python 3.13</span>
+  </div>
+</header>
+
+<div class="layout">
+  <aside>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Chapter 5</span>
+      <a href="#intro" class="sidebar-link active"><span class="num">§</span> Data Structures</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Sections</span>
+      <a href="#lists" class="sidebar-link"><span class="num">5.1</span> More on Lists</a>
+      <a href="#stacks" class="sidebar-link sidebar-sub"><span class="num">5.1.1</span> Lists as Stacks</a>
+      <a href="#queues" class="sidebar-link sidebar-sub"><span class="num">5.1.2</span> Lists as Queues</a>
+      <a href="#comprehensions" class="sidebar-link sidebar-sub"><span class="num">5.1.3</span> Comprehensions</a>
+      <a href="#nested" class="sidebar-link sidebar-sub"><span class="num">5.1.4</span> Nested Comprehensions</a>
+      <a href="#del" class="sidebar-link"><span class="num">5.2</span> The del Statement</a>
+      <a href="#tuples" class="sidebar-link"><span class="num">5.3</span> Tuples & Sequences</a>
+      <a href="#sets" class="sidebar-link"><span class="num">5.4</span> Sets</a>
+      <a href="#dicts" class="sidebar-link"><span class="num">5.5</span> Dictionaries</a>
+      <a href="#looping" class="sidebar-link"><span class="num">5.6</span> Looping Techniques</a>
+      <a href="#conditions" class="sidebar-link"><span class="num">5.7</span> Advanced Conditions</a>
+      <a href="#comparing" class="sidebar-link"><span class="num">5.8</span> Comparing Sequences</a>
+    </div>
+    <div class="sidebar-section">
+      <span class="sidebar-label">Advanced</span>
+      <a href="#internals" class="sidebar-link"><span class="num">⟢</span> CPython Internals</a>
+      <a href="#patterns" class="sidebar-link"><span class="num">⟢</span> Design Patterns</a>
+    </div>
+  </aside>
+
+  <main>
+    <div id="intro" class="chapter-header">
+      <div class="chapter-label">Chapter 5</div>
+      <h1><span class="chapter-num">5.</span> Data Structures</h1>
+      <p class="chapter-desc">A deep-dive into Python's built-in data structures — their internals, time complexities, advanced idioms, and the design decisions that make them elegant.</p>
+    </div>
+
+    <!-- 5.1 MORE ON LISTS -->
+    <div id="lists" class="section">
+      <h2><span class="sec-num">5.1</span> More on Lists <a class="anchor" href="#lists">¶</a></h2>
+
+      <div class="toc-inline">
+        <h4>In this section</h4>
+        <ol>
+          <li><a href="#stacks">Lists as Stacks</a></li>
+          <li><a href="#queues">Lists as Queues</a></li>
+          <li><a href="#comprehensions">Comprehensions</a></li>
+          <li><a href="#nested">Nested Comprehensions</a></li>
+        </ol>
+      </div>
+
+      <p>Python lists are dynamic arrays backed by a contiguous block of memory. They support O(1) amortized append via a growth strategy of approximately 1.125× the current capacity — a pattern that balances memory waste against the cost of reallocations. Under the hood, CPython stores an array of PyObject pointers, making lists heterogeneous by construction.</p>
+
+      <p>Every method on a list object is documented below with its signature, time complexity, and typical use-cases.</p>
+
+      <div class="def-list">
+        <div class="def-item">
+          <div class="def-term"><code>list.append(x)</code> <span class="complexity-tag">O(1) amortized</span></div>
+          <div class="def-body">Add a single item to the end of the list. Internally, if the backing array is full, Python allocates a new array of size <code>new_cap = floor(cap * 1.125) + 3</code> and copies elements over. Equivalent to <code>a[len(a):] = [x]</code> but significantly faster since no slice object is constructed.</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term"><code>list.extend(iterable)</code> <span class="complexity-tag">O(k)</span></div>
+          <div class="def-body">Append all items from any iterable. Unlike <code>+</code> concatenation, <code>extend</code> mutates in-place and does not create an intermediate list. For generators this is especially efficient — elements are consumed one at a time. Equivalent to <code>a[len(a):] = iterable</code>.</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term"><code>list.insert(i, x)</code> <span class="complexity-tag">O(n)</span></div>
+          <div class="def-body">Insert item <em>x</em> before position <em>i</em>. All subsequent elements must be shifted right by one position, making this O(n). Inserting at <code>i=0</code> is the worst case. For frequent head-insertions, prefer <code>collections.deque</code>. Negative indices are clamped to 0; indices beyond <code>len(a)</code> append.</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term"><code>list.remove(x)</code> <span class="complexity-tag">O(n)</span></div>
+          <div class="def-body">Remove the first occurrence of <em>x</em> by value. Raises <code>ValueError</code> if not found. Python uses <code>==</code> equality, not identity (<code>is</code>). To remove all occurrences, use a comprehension: <code>a = [v for v in a if v != x]</code>.</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term"><code>list.pop([i])</code> <span class="complexity-tag">O(1) tail / O(n) arbitrary</span></div>
+          <div class="def-body">Remove and return the element at index <em>i</em> (default: <code>-1</code>, the last element). Tail-pop is O(1); popping from an arbitrary index requires shifting, making it O(n). Raises <code>IndexError</code> on empty list or out-of-bounds index.</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term"><code>list.clear()</code> <span class="complexity-tag">O(n)</span></div>
+          <div class="def-body">Remove all items in-place, decrementing each element's reference count. The list object itself is reused (same id). Equivalent to <code>del a[:]</code>. After clearing, the backing array capacity is <em>not</em> reset — use <code>a = []</code> to also reclaim memory.</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term"><code>list.index(x[, start[, end]])</code> <span class="complexity-tag">O(n)</span></div>
+          <div class="def-body">Return the zero-based index of the first item equal to <em>x</em>, optionally restricting the search to the slice <code>a[start:end]</code>. The returned index is absolute (relative to the full list), not relative to <em>start</em>. Raises <code>ValueError</code> if no match is found.</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term"><code>list.count(x)</code> <span class="complexity-tag">O(n)</span></div>
+          <div class="def-body">Return the number of times <em>x</em> appears. Uses <code>==</code> equality. For large lists where frequency counts matter, <code>collections.Counter</code> computes counts for all unique elements in a single O(n) pass.</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term"><code>list.sort(*, key=None, reverse=False)</code> <span class="complexity-tag">O(n log n)</span></div>
+          <div class="def-body">Sort the list <strong>in place</strong> using <strong>Timsort</strong> — a hybrid merge/insertion sort algorithm that is stable and adaptive. On nearly-sorted data, Timsort degrades to O(n). The <code>key</code> function is called once per element (Schwartzian transform), not on each comparison. Mutating sort returns <code>None</code>; use the built-in <code>sorted()</code> for a sorted copy.</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term"><code>list.reverse()</code> <span class="complexity-tag">O(n)</span></div>
+          <div class="def-body">Reverse the list <strong>in place</strong> using a two-pointer swap. Returns <code>None</code>. For a reversed copy, use <code>a[::-1]</code> or <code>reversed(a)</code>. Note that <code>reversed(a)</code> returns an iterator — no copy is made.</div>
+        </div>
+        <div class="def-item">
+          <div class="def-term"><code>list.copy()</code> <span class="complexity-tag">O(n)</span></div>
+          <div class="def-body">Return a <strong>shallow</strong> copy: a new list with the same references. For deep copies (recursively independent), use <code>copy.deepcopy(a)</code>. Equivalent to <code>a[:]</code> and <code>list(a)</code>.</div>
+        </div>
+      </div>
+
+      <div class="callout callout-perf">
+        <div class="callout-title">⚡ Performance Insight</div>
+        Mutating methods (<code>sort</code>, <code>reverse</code>, <code>append</code>, etc.) return <code>None</code> by Python convention — this signals that the operation acts in-place and prevents chaining that would obscure mutation. This is a deliberate design choice, not a limitation.
+      </div>
+
+      <h3><span class="sec-num">5.1.1</span> <a id="stacks">Using Lists as Stacks</a></h3>
+      <p>A <strong>stack</strong> (LIFO — last in, first out) is trivially implemented with a list: <code>append()</code> pushes to the top; <code>pop()</code> pulls from the top. Both operations are O(1) amortized, making lists an excellent stack implementation.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — Stack (LIFO)</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="prompt">&gt;&gt;&gt; </span><span class="nm">call_stack</span> <span class="op">=</span> [<span class="st">'main'</span>]
+<span class="prompt">&gt;&gt;&gt; </span><span class="nm">call_stack</span>.<span class="fn">append</span>(<span class="st">'process_request'</span>)
+<span class="prompt">&gt;&gt;&gt; </span><span class="nm">call_stack</span>.<span class="fn">append</span>(<span class="st">'validate_token'</span>)
+<span class="prompt">&gt;&gt;&gt; </span><span class="nm">call_stack</span>.<span class="fn">append</span>(<span class="st">'db_query'</span>)
+<span class="prompt">&gt;&gt;&gt; </span><span class="nm">call_stack</span>
+<span class="out">['main', 'process_request', 'validate_token', 'db_query']</span>
+<span class="prompt">&gt;&gt;&gt; </span><span class="nm">call_stack</span>.<span class="fn">pop</span>()  <span class="cm"># db_query returns</span>
+<span class="out">'db_query'</span>
+<span class="prompt">&gt;&gt;&gt; </span><span class="nm">call_stack</span>.<span class="fn">pop</span>()  <span class="cm"># validate_token returns</span>
+<span class="out">'validate_token'</span>
+<span class="prompt">&gt;&gt;&gt; </span><span class="nm">call_stack</span>
+<span class="out">['main', 'process_request']</span></code></pre>
+      </div>
+
+      <div class="callout callout-tip">
+        <div class="callout-title">💡 Advanced Pattern — Undo/Redo</div>
+        Two stacks can implement a fully functional undo/redo system: push operations onto <code>undo_stack</code>; on undo, pop from <code>undo_stack</code> and push the inverse onto <code>redo_stack</code>. This pattern is used in text editors, drawing apps, and database transaction logs.
+      </div>
+
+      <h3><span class="sec-num">5.1.2</span> <a id="queues">Using Lists as Queues</a></h3>
+      <p>While you <em>can</em> use a list as a FIFO queue (e.g., <code>list.pop(0)</code> to dequeue), doing so is <strong>O(n)</strong> due to element shifting. For production queue use-cases, always prefer <code>collections.deque</code>, which uses a doubly-linked list of fixed-size blocks (deque blocks), giving O(1) pops and appends at both ends.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — Queue via collections.deque</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">from</span> <span class="bi">collections</span> <span class="kw">import</span> <span class="bi">deque</span>
+
+<span class="nm">task_queue</span> <span class="op">=</span> <span class="bi">deque</span>([<span class="st">'render_frame'</span>, <span class="st">'write_log'</span>, <span class="st">'send_event'</span>], maxlen=<span class="num-lit">100</span>)
+<span class="nm">task_queue</span>.<span class="fn">appendleft</span>(<span class="st">'high_priority_flush'</span>)  <span class="cm"># O(1) head insert</span>
+
+<span class="kw">while</span> <span class="nm">task_queue</span>:
+    <span class="nm">task</span> <span class="op">=</span> <span class="nm">task_queue</span>.<span class="fn">popleft</span>()           <span class="cm"># O(1) FIFO dequeue</span>
+    <span class="fn">print</span>(<span class="st">f'Processing: </span>{<span class="nm">task</span>}<span class="st">'</span>)
+
+<span class="cm"># Output:</span>
+<span class="cm"># Processing: high_priority_flush</span>
+<span class="cm"># Processing: render_frame</span>
+<span class="cm"># Processing: write_log</span>
+<span class="cm"># Processing: send_event</span></code></pre>
+      </div>
+
+      <div class="callout callout-note">
+        <div class="callout-title">ℹ Note — maxlen Behaviour</div>
+        When <code>maxlen</code> is set, the deque is bounded. Appending to a full deque automatically discards the opposite end — useful for <strong>sliding-window</strong> algorithms and fixed-size LRU-like caches.
+      </div>
+
+      <h3><span class="sec-num">5.1.3</span> <a id="comprehensions">List Comprehensions</a></h3>
+      <p>List comprehensions are syntactic sugar over a <code>for</code> loop that builds a list, but they are faster in practice because the CPython bytecode compiler emits a <code>LIST_APPEND</code> opcode in a tight loop, avoiding the overhead of <code>list.append</code> name-lookups.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — Comprehension Forms</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cm"># Basic: squares</span>
+<span class="nm">squares</span> <span class="op">=</span> [<span class="nm">x</span><span class="op">**</span><span class="num-lit">2</span> <span class="kw">for</span> <span class="nm">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num-lit">10</span>)]
+
+<span class="cm"># Filtered: even squares only</span>
+<span class="nm">even_sq</span> <span class="op">=</span> [<span class="nm">x</span><span class="op">**</span><span class="num-lit">2</span> <span class="kw">for</span> <span class="nm">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num-lit">10</span>) <span class="kw">if</span> <span class="nm">x</span> <span class="op">%</span> <span class="num-lit">2</span> <span class="op">==</span> <span class="num-lit">0</span>]
+
+<span class="cm"># Conditional expression (ternary) in the output position</span>
+<span class="nm">labels</span> <span class="op">=</span> [<span class="st">'even'</span> <span class="kw">if</span> <span class="nm">x</span> <span class="op">%</span> <span class="num-lit">2</span> <span class="op">==</span> <span class="num-lit">0</span> <span class="kw">else</span> <span class="st">'odd'</span> <span class="kw">for</span> <span class="nm">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num-lit">6</span>)]
+<span class="cm"># ['even', 'odd', 'even', 'odd', 'even', 'odd']</span>
+
+<span class="cm"># Flatten a matrix</span>
+<span class="nm">matrix</span> <span class="op">=</span> [[<span class="num-lit">1</span>, <span class="num-lit">2</span>, <span class="num-lit">3</span>], [<span class="num-lit">4</span>, <span class="num-lit">5</span>, <span class="num-lit">6</span>], [<span class="num-lit">7</span>, <span class="num-lit">8</span>, <span class="num-lit">9</span>]]
+<span class="nm">flat</span> <span class="op">=</span> [<span class="nm">n</span> <span class="kw">for</span> <span class="nm">row</span> <span class="kw">in</span> <span class="nm">matrix</span> <span class="kw">for</span> <span class="nm">n</span> <span class="kw">in</span> <span class="nm">row</span>]
+<span class="cm"># [1, 2, 3, 4, 5, 6, 7, 8, 9]</span>
+
+<span class="cm"># Cartesian product with filter</span>
+<span class="nm">pairs</span> <span class="op">=</span> [(<span class="nm">x</span>, <span class="nm">y</span>) <span class="kw">for</span> <span class="nm">x</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num-lit">1</span>, <span class="num-lit">5</span>) <span class="kw">for</span> <span class="nm">y</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num-lit">1</span>, <span class="num-lit">5</span>) <span class="kw">if</span> <span class="nm">x</span> <span class="op">!=</span> <span class="nm">y</span>]
+
+<span class="cm"># Walrus operator (:=) for expensive computations — compute once, use twice</span>
+<span class="nm">results</span> <span class="op">=</span> [<span class="nm">y</span> <span class="op">:=</span> <span class="nm">x</span><span class="op">**</span><span class="num-lit">3</span> <span class="op">-</span> <span class="nm">x</span>, <span class="nm">y</span><span class="op">*</span><span class="num-lit">2</span> <span class="kw">if</span> <span class="nm">y</span> <span class="op">&gt;</span> <span class="num-lit">0</span> <span class="kw">else</span> <span class="nm">y</span>]  <span class="cm"># advanced: walrus in listcomp</span></code></pre>
+      </div>
+
+      <div class="callout callout-warn">
+        <div class="callout-title">⚠ Memory Warning</div>
+        If you only need to iterate once, a <strong>generator expression</strong> is more memory-efficient: <code>(x**2 for x in range(10**7))</code> uses O(1) memory vs. a list comprehension which materializes all elements. Use list comprehensions only when you need random access, multiple iterations, or <code>len()</code>.
+      </div>
+
+      <h3><span class="sec-num">5.1.4</span> <a id="nested">Nested List Comprehensions</a></h3>
+      <p>The expression in a list comprehension can itself be a list comprehension — useful for transposing matrices, building 2D grids, and parsing structured data without importing <code>numpy</code>.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — Nested Comprehensions & Transpose</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cm"># Transpose a 3×4 matrix without numpy</span>
+<span class="nm">matrix</span> <span class="op">=</span> [
+    [<span class="num-lit">1</span>,  <span class="num-lit">2</span>,  <span class="num-lit">3</span>,  <span class="num-lit">4</span>],
+    [<span class="num-lit">5</span>,  <span class="num-lit">6</span>,  <span class="num-lit">7</span>,  <span class="num-lit">8</span>],
+    [<span class="num-lit">9</span>,  <span class="num-lit">10</span>, <span class="num-lit">11</span>, <span class="num-lit">12</span>],
+]
+
+<span class="nm">transposed</span> <span class="op">=</span> [[<span class="nm">row</span>[<span class="nm">i</span>] <span class="kw">for</span> <span class="nm">row</span> <span class="kw">in</span> <span class="nm">matrix</span>] <span class="kw">for</span> <span class="nm">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num-lit">4</span>)]
+<span class="cm"># [[1, 5, 9], [2, 6, 10], [3, 7, 11], [4, 8, 12]]</span>
+
+<span class="cm"># Idiomatic equivalent using zip(*matrix)</span>
+<span class="nm">transposed</span> <span class="op">=</span> [<span class="fn">list</span>(<span class="nm">row</span>) <span class="kw">for</span> <span class="nm">row</span> <span class="kw">in</span> <span class="fn">zip</span>(<span class="op">*</span><span class="nm">matrix</span>)]
+
+<span class="cm"># Build a multiplication table as a dict of dicts</span>
+<span class="nm">mult_table</span> <span class="op">=</span> {
+    <span class="nm">i</span>: {<span class="nm">j</span>: <span class="nm">i</span> <span class="op">*</span> <span class="nm">j</span> <span class="kw">for</span> <span class="nm">j</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num-lit">1</span>, <span class="num-lit">10</span>)}
+    <span class="kw">for</span> <span class="nm">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num-lit">1</span>, <span class="num-lit">10</span>)
+}</code></pre>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 5.2 DEL -->
+    <div id="del" class="section">
+      <h2><span class="sec-num">5.2</span> The <code>del</code> Statement <a class="anchor" href="#del">¶</a></h2>
+      <p>The <code>del</code> statement decrements the reference count of an object. When the count reaches zero, CPython's reference-counting garbage collector deallocates the object immediately (cycles are handled by the cyclic GC). <code>del</code> can target variables, slice ranges, and dictionary entries.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — del in Depth</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="nm">a</span> <span class="op">=</span> [<span class="num-lit">1</span>, <span class="num-lit">2</span>, <span class="num-lit">3</span>, <span class="num-lit">4</span>, <span class="num-lit">5</span>, <span class="num-lit">6</span>]
+<span class="kw">del</span> <span class="nm">a</span>[<span class="num-lit">0</span>]          <span class="cm"># remove first element → [2, 3, 4, 5, 6]</span>
+<span class="kw">del</span> <span class="nm">a</span>[<span class="num-lit">2</span>:<span class="num-lit">4</span>]        <span class="cm"># remove a slice → [2, 3, 6]</span>
+<span class="kw">del</span> <span class="nm">a</span>[:]           <span class="cm"># clear list (same backing object) → []</span>
+<span class="kw">del</span> <span class="nm">a</span>              <span class="cm"># unbind the name; list may be GC'd if no other refs</span>
+
+<span class="cm"># del on a dict entry</span>
+<span class="nm">config</span> <span class="op">=</span> {<span class="st">'debug'</span>: <span class="kw">True</span>, <span class="st">'host'</span>: <span class="st">'localhost'</span>, <span class="st">'port'</span>: <span class="num-lit">8080</span>}
+<span class="kw">del</span> <span class="nm">config</span>[<span class="st">'debug'</span>]  <span class="cm"># {'host': 'localhost', 'port': 8080}</span></code></pre>
+      </div>
+
+      <div class="callout callout-note">
+        <div class="callout-title">ℹ Note — del vs None</div>
+        <code>del x</code> unbinds the name <code>x</code> from its object; it does <em>not</em> "delete" the object if other names point to it. Assigning <code>x = None</code> rebinds <code>x</code> to the singleton <code>None</code>, keeping the name alive while dropping the reference to the original value.
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 5.3 TUPLES -->
+    <div id="tuples" class="section">
+      <h2><span class="sec-num">5.3</span> Tuples and Sequences <a class="anchor" href="#tuples">¶</a></h2>
+      <p>Tuples are <strong>immutable sequences</strong> of heterogeneous data. Because they cannot be modified after creation, CPython can store tuples in a free-list cache (up to 20 tuples of length ≤ 20), making tuple creation faster than list creation for small, static collections.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — Tuple Idioms</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cm"># Packing and unpacking</span>
+<span class="nm">point</span> <span class="op">=</span> (<span class="num-lit">3.0</span>, <span class="num-lit">4.0</span>, <span class="num-lit">0.0</span>)
+<span class="nm">x</span>, <span class="nm">y</span>, <span class="nm">z</span> <span class="op">=</span> <span class="nm">point</span>
+
+<span class="cm"># Star unpacking (extended iterable unpacking)</span>
+<span class="nm">first</span>, <span class="op">*</span><span class="nm">middle</span>, <span class="nm">last</span> <span class="op">=</span> (<span class="num-lit">1</span>, <span class="num-lit">2</span>, <span class="num-lit">3</span>, <span class="num-lit">4</span>, <span class="num-lit">5</span>)
+<span class="cm"># first=1, middle=[2, 3, 4], last=5</span>
+
+<span class="cm"># Swap without a temp variable (tuple packing/unpacking)</span>
+<span class="nm">a</span>, <span class="nm">b</span> <span class="op">=</span> <span class="nm">b</span>, <span class="nm">a</span>
+
+<span class="cm"># Named tuples — self-documenting tuples with no memory overhead vs plain tuples</span>
+<span class="kw">from</span> <span class="bi">collections</span> <span class="kw">import</span> <span class="bi">namedtuple</span>
+<span class="kw">from</span> <span class="bi">typing</span> <span class="kw">import</span> <span class="bi">NamedTuple</span>
+
+<span class="kw">class</span> <span class="fn">Vector3D</span>(<span class="bi">NamedTuple</span>):
+    <span class="nm">x</span>: <span class="bi">float</span>
+    <span class="nm">y</span>: <span class="bi">float</span>
+    <span class="nm">z</span>: <span class="bi">float</span> <span class="op">=</span> <span class="num-lit">0.0</span>  <span class="cm"># default value</span>
+
+<span class="nm">v</span> <span class="op">=</span> <span class="fn">Vector3D</span>(<span class="nm">x</span><span class="op">=</span><span class="num-lit">1.0</span>, <span class="nm">y</span><span class="op">=</span><span class="num-lit">2.0</span>)
+<span class="fn">print</span>(<span class="nm">v</span>.<span class="nm">x</span>, <span class="nm">v</span>._asdict(), <span class="nm">v</span>._replace(z<span class="op">=</span><span class="num-lit">5.0</span>))</code></pre>
+      </div>
+
+      <p>Tuples are hashable (when their elements are hashable), making them valid <strong>dictionary keys</strong> and <strong>set members</strong> — a fundamental capability lists lack. This is the primary reason to prefer tuples as composite keys in mappings.</p>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 5.4 SETS -->
+    <div id="sets" class="section">
+      <h2><span class="sec-num">5.4</span> Sets <a class="anchor" href="#sets">¶</a></h2>
+      <p>A set is an unordered collection of <em>unique, hashable</em> objects backed by a hash table. CPython implements sets with open addressing and linear probing. Average-case operations (membership test, add, remove) are O(1); worst-case is O(n) due to hash collisions, but this is extremely rare in practice.</p>
+
+      <div class="complexity-grid">
+        <div class="complexity-card">
+          <div class="cc-op">add / discard</div>
+          <div class="cc-val">O(1)</div>
+          <div class="cc-desc">average amortized</div>
+        </div>
+        <div class="complexity-card">
+          <div class="cc-op">x in s</div>
+          <div class="cc-val">O(1)</div>
+          <div class="cc-desc">hash lookup</div>
+        </div>
+        <div class="complexity-card">
+          <div class="cc-op">s | t (union)</div>
+          <div class="cc-val">O(m+n)</div>
+          <div class="cc-desc">iterate + insert</div>
+        </div>
+        <div class="complexity-card">
+          <div class="cc-op">s & t (intersect)</div>
+          <div class="cc-val">O(min(m,n))</div>
+          <div class="cc-desc">probe smaller set</div>
+        </div>
+        <div class="complexity-card">
+          <div class="cc-op">s - t (diff)</div>
+          <div class="cc-val">O(m)</div>
+          <div class="cc-desc">iterate left set</div>
+        </div>
+        <div class="complexity-card">
+          <div class="cc-op">s ^ t (sym diff)</div>
+          <div class="cc-val">O(m+n)</div>
+          <div class="cc-desc">union minus intersect</div>
+        </div>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — Set Operations & Advanced Patterns</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="nm">a</span> <span class="op">=</span> {<span class="num-lit">1</span>, <span class="num-lit">2</span>, <span class="num-lit">3</span>, <span class="num-lit">4</span>, <span class="num-lit">5</span>}
+<span class="nm">b</span> <span class="op">=</span> {<span class="num-lit">3</span>, <span class="num-lit">4</span>, <span class="num-lit">5</span>, <span class="num-lit">6</span>, <span class="num-lit">7</span>}
+
+<span class="cm"># Set algebra — both operator and method forms exist</span>
+<span class="nm">a</span> <span class="op">|</span> <span class="nm">b</span>         <span class="cm"># Union:               {1,2,3,4,5,6,7}</span>
+<span class="nm">a</span> <span class="op">&amp;</span> <span class="nm">b</span>         <span class="cm"># Intersection:        {3,4,5}</span>
+<span class="nm">a</span> <span class="op">-</span> <span class="nm">b</span>         <span class="cm"># Difference:          {1,2}</span>
+<span class="nm">a</span> <span class="op">^</span> <span class="nm">b</span>         <span class="cm"># Symmetric difference: {1,2,6,7}</span>
+<span class="nm">a</span> <span class="op">&lt;=</span> <span class="nm">b</span>        <span class="cm"># Subset test: False</span>
+<span class="nm">a</span>.<span class="fn">isdisjoint</span>(<span class="nm">b</span>) <span class="cm"># False (share 3,4,5)</span>
+
+<span class="cm"># Set comprehension with filter</span>
+<span class="nm">primes</span> <span class="op">=</span> {<span class="nm">n</span> <span class="kw">for</span> <span class="nm">n</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num-lit">2</span>, <span class="num-lit">50</span>)
+          <span class="kw">if</span> <span class="fn">all</span>(<span class="nm">n</span> <span class="op">%</span> <span class="nm">i</span> <span class="op">!=</span> <span class="num-lit">0</span> <span class="kw">for</span> <span class="nm">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num-lit">2</span>, <span class="nm">n</span>))}
+
+<span class="cm"># Deduplicate while preserving order (Python 3.7+ dict is ordered)</span>
+<span class="nm">seq</span> <span class="op">=</span> [<span class="num-lit">3</span>, <span class="num-lit">1</span>, <span class="num-lit">4</span>, <span class="num-lit">1</span>, <span class="num-lit">5</span>, <span class="num-lit">9</span>, <span class="num-lit">2</span>, <span class="num-lit">6</span>, <span class="num-lit">5</span>]
+<span class="nm">unique_ordered</span> <span class="op">=</span> <span class="fn">list</span>(<span class="fn">dict</span>.<span class="fn">fromkeys</span>(<span class="nm">seq</span>))  <span class="cm"># [3,1,4,5,9,2,6]</span>
+
+<span class="cm"># frozenset: immutable, hashable — can be used as dict key</span>
+<span class="nm">graph_edge</span> <span class="op">=</span> <span class="fn">frozenset</span>({<span class="st">'node_a'</span>, <span class="st">'node_b'</span>})
+<span class="nm">edge_weights</span> <span class="op">=</span> {<span class="nm">graph_edge</span>: <span class="num-lit">4.2</span>}</code></pre>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 5.5 DICTIONARIES -->
+    <div id="dicts" class="section">
+      <h2><span class="sec-num">5.5</span> Dictionaries <a class="anchor" href="#dicts">¶</a></h2>
+      <p>Dictionaries are Python's most versatile data structure. Since Python 3.7, dicts maintain <strong>insertion order</strong> as a language guarantee (not just an implementation detail). CPython 3.6+ uses a compact dict representation: a sparse array of indices pointing into a dense array of (hash, key, value) triples.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — Dict Construction Patterns</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cm"># Multiple construction methods</span>
+<span class="nm">d1</span> <span class="op">=</span> {<span class="st">'one'</span>: <span class="num-lit">1</span>, <span class="st">'two'</span>: <span class="num-lit">2</span>}
+<span class="nm">d2</span> <span class="op">=</span> <span class="fn">dict</span>(one<span class="op">=</span><span class="num-lit">1</span>, two<span class="op">=</span><span class="num-lit">2</span>)
+<span class="nm">d3</span> <span class="op">=</span> <span class="fn">dict</span>.<span class="fn">fromkeys</span>([<span class="st">'a'</span>, <span class="st">'b'</span>, <span class="st">'c'</span>], <span class="num-lit">0</span>)  <span class="cm"># {'a':0,'b':0,'c':0}</span>
+<span class="nm">d4</span> <span class="op">=</span> <span class="fn">dict</span>(<span class="fn">zip</span>(<span class="st">'abc'</span>, [<span class="num-lit">1</span>, <span class="num-lit">2</span>, <span class="num-lit">3</span>]))
+
+<span class="cm"># Dict comprehension with complex transform</span>
+<span class="nm">word_freq</span> <span class="op">=</span> {<span class="nm">w</span>: <span class="nm">text</span>.<span class="fn">count</span>(<span class="nm">w</span>) <span class="kw">for</span> <span class="nm">w</span> <span class="kw">in</span> <span class="fn">set</span>(<span class="nm">text</span>.<span class="fn">split</span>())}
+
+<span class="cm"># Dict merging (Python 3.9+)</span>
+<span class="nm">defaults</span> <span class="op">=</span> {<span class="st">'timeout'</span>: <span class="num-lit">30</span>, <span class="st">'retries'</span>: <span class="num-lit">3</span>, <span class="st">'verbose'</span>: <span class="kw">False</span>}
+<span class="nm">overrides</span> <span class="op">=</span> {<span class="st">'retries'</span>: <span class="num-lit">5</span>, <span class="st">'host'</span>: <span class="st">'prod.example.com'</span>}
+<span class="nm">config</span> <span class="op">=</span> <span class="nm">defaults</span> <span class="op">|</span> <span class="nm">overrides</span>  <span class="cm"># {'timeout':30,'retries':5,'verbose':False,'host':'...'}</span>
+
+<span class="cm"># get() with default, setdefault(), pop() with default</span>
+<span class="nm">val</span> <span class="op">=</span> <span class="nm">config</span>.<span class="fn">get</span>(<span class="st">'missing_key'</span>, <span class="st">'default'</span>)
+<span class="nm">config</span>.<span class="fn">setdefault</span>(<span class="st">'cache'</span>, {})  <span class="cm"># only sets if key absent</span>
+
+<span class="cm"># Inverting a dict (assumes values are unique)</span>
+<span class="nm">inv</span> <span class="op">=</span> {<span class="nm">v</span>: <span class="nm">k</span> <span class="kw">for</span> <span class="nm">k</span>, <span class="nm">v</span> <span class="kw">in</span> <span class="nm">d1</span>.<span class="fn">items</span>()}</code></pre>
+      </div>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — defaultdict, Counter, ChainMap</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">from</span> <span class="bi">collections</span> <span class="kw">import</span> <span class="bi">defaultdict</span>, <span class="bi">Counter</span>, <span class="bi">ChainMap</span>
+
+<span class="cm"># defaultdict: auto-initialise missing keys</span>
+<span class="nm">graph</span> <span class="op">=</span> <span class="bi">defaultdict</span>(<span class="fn">list</span>)
+<span class="kw">for</span> <span class="nm">src</span>, <span class="nm">dst</span> <span class="kw">in</span> [(<span class="st">'a'</span>,<span class="st">'b'</span>),(<span class="st">'a'</span>,<span class="st">'c'</span>),(<span class="st">'b'</span>,<span class="st">'d'</span>)]:
+    <span class="nm">graph</span>[<span class="nm">src</span>].<span class="fn">append</span>(<span class="nm">dst</span>)
+<span class="cm"># {'a': ['b', 'c'], 'b': ['d']}</span>
+
+<span class="cm"># Counter: frequency map with arithmetic</span>
+<span class="nm">text</span> <span class="op">=</span> <span class="st">"the quick brown fox jumps over the lazy dog"</span>
+<span class="nm">freq</span> <span class="op">=</span> <span class="bi">Counter</span>(<span class="nm">text</span>.<span class="fn">split</span>())
+<span class="nm">freq</span>.<span class="fn">most_common</span>(<span class="num-lit">3</span>)  <span class="cm"># [('the', 2), ('quick', 1), ...]</span>
+
+<span class="cm"># ChainMap: logical overlay of multiple dicts (no copy)</span>
+<span class="nm">user_prefs</span>  <span class="op">=</span> {<span class="st">'theme'</span>: <span class="st">'dark'</span>}
+<span class="nm">app_defaults</span> <span class="op">=</span> {<span class="st">'theme'</span>: <span class="st">'light'</span>, <span class="st">'lang'</span>: <span class="st">'en'</span>}
+<span class="nm">settings</span> <span class="op">=</span> <span class="bi">ChainMap</span>(<span class="nm">user_prefs</span>, <span class="nm">app_defaults</span>)
+<span class="nm">settings</span>[<span class="st">'theme'</span>]  <span class="cm"># 'dark' (user_prefs wins)</span>
+<span class="nm">settings</span>[<span class="st">'lang'</span>]   <span class="cm"># 'en'  (falls through to app_defaults)</span></code></pre>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 5.6 LOOPING -->
+    <div id="looping" class="section">
+      <h2><span class="sec-num">5.6</span> Looping Techniques <a class="anchor" href="#looping">¶</a></h2>
+      <p>Python's iteration protocol is one of its most powerful features. Any object implementing <code>__iter__</code> and <code>__next__</code> participates in the protocol, and the built-in functions below compose cleanly with lazy generators.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — Advanced Iteration Patterns</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">import</span> <span class="bi">itertools</span>
+
+<span class="cm"># enumerate — index + value without a counter</span>
+<span class="kw">for</span> <span class="nm">i</span>, <span class="nm">v</span> <span class="kw">in</span> <span class="fn">enumerate</span>([<span class="st">'a'</span>, <span class="st">'b'</span>, <span class="st">'c'</span>], start<span class="op">=</span><span class="num-lit">1</span>):
+    <span class="fn">print</span>(<span class="nm">i</span>, <span class="nm">v</span>)   <span class="cm"># 1 a, 2 b, 3 c</span>
+
+<span class="cm"># zip — iterate multiple sequences in lockstep (stops at shortest)</span>
+<span class="nm">keys</span>   <span class="op">=</span> [<span class="st">'x'</span>, <span class="st">'y'</span>, <span class="st">'z'</span>]
+<span class="nm">values</span> <span class="op">=</span> [<span class="num-lit">10</span>, <span class="num-lit">20</span>, <span class="num-lit">30</span>]
+<span class="nm">merged</span> <span class="op">=</span> <span class="fn">dict</span>(<span class="fn">zip</span>(<span class="nm">keys</span>, <span class="nm">values</span>))
+
+<span class="cm"># zip_longest — pad shorter iterables</span>
+<span class="kw">from</span> <span class="bi">itertools</span> <span class="kw">import</span> <span class="bi">zip_longest</span>
+<span class="kw">for</span> <span class="nm">a</span>, <span class="nm">b</span> <span class="kw">in</span> <span class="bi">zip_longest</span>([<span class="num-lit">1</span>,<span class="num-lit">2</span>,<span class="num-lit">3</span>], [<span class="st">'a'</span>,<span class="st">'b'</span>], fillvalue<span class="op">=</span><span class="kw">None</span>):
+    <span class="fn">print</span>(<span class="nm">a</span>, <span class="nm">b</span>)
+
+<span class="cm"># reversed + enumerate for countdown</span>
+<span class="kw">for</span> <span class="nm">i</span>, <span class="nm">item</span> <span class="kw">in</span> <span class="fn">enumerate</span>(<span class="fn">reversed</span>(<span class="nm">keys</span>)):
+    <span class="fn">print</span>(<span class="nm">i</span>, <span class="nm">item</span>)
+
+<span class="cm"># sorted with custom key — sort by multiple criteria</span>
+<span class="nm">records</span> <span class="op">=</span> [(<span class="st">'Alice'</span>, <span class="num-lit">28</span>), (<span class="st">'Bob'</span>, <span class="num-lit">22</span>), (<span class="st">'Carol'</span>, <span class="num-lit">28</span>)]
+<span class="fn">sorted</span>(<span class="nm">records</span>, key<span class="op">=</span><span class="kw">lambda</span> <span class="nm">r</span>: (<span class="nm">r</span>[<span class="num-lit">1</span>], <span class="nm">r</span>[<span class="num-lit">0</span>]))  <span class="cm"># age asc, then name asc</span>
+
+<span class="cm"># itertools.chain — iterate multiple iterables as one (no copy)</span>
+<span class="nm">combined</span> <span class="op">=</span> <span class="bi">itertools</span>.<span class="fn">chain</span>(<span class="fn">range</span>(<span class="num-lit">3</span>), [<span class="st">'a'</span>, <span class="st">'b'</span>], (<span class="kw">True</span>, <span class="kw">False</span>))
+
+<span class="cm"># itertools.groupby — consecutive group aggregation</span>
+<span class="kw">from</span> <span class="bi">itertools</span> <span class="kw">import</span> <span class="bi">groupby</span>
+<span class="nm">data</span> <span class="op">=</span> [(<span class="st">'fruit'</span>, <span class="st">'apple'</span>), (<span class="st">'fruit'</span>, <span class="st">'kiwi'</span>), (<span class="st">'veg'</span>, <span class="st">'carrot'</span>)]
+<span class="kw">for</span> <span class="nm">category</span>, <span class="nm">items</span> <span class="kw">in</span> <span class="bi">groupby</span>(<span class="nm">data</span>, key<span class="op">=</span><span class="kw">lambda</span> <span class="nm">t</span>: <span class="nm">t</span>[<span class="num-lit">0</span>]):
+    <span class="fn">print</span>(<span class="nm">category</span>, [<span class="nm">i</span>[<span class="num-lit">1</span>] <span class="kw">for</span> <span class="nm">i</span> <span class="kw">in</span> <span class="nm">items</span>])</code></pre>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 5.7 CONDITIONS -->
+    <div id="conditions" class="section">
+      <h2><span class="sec-num">5.7</span> Advanced Conditions <a class="anchor" href="#conditions">¶</a></h2>
+      <p>Python's boolean operators <code>and</code> / <code>or</code> use short-circuit evaluation and return one of their <em>operands</em>, not necessarily <code>True</code> or <code>False</code>. This enables concise default-value patterns.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — Boolean Idioms & Structural Pattern Matching</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cm"># Short-circuit default (or-idiom)</span>
+<span class="nm">name</span> <span class="op">=</span> <span class="nm">user_input</span> <span class="kw">or</span> <span class="st">'anonymous'</span>
+
+<span class="cm"># and-idiom: guard then access</span>
+<span class="nm">value</span> <span class="op">=</span> <span class="nm">data</span> <span class="kw">and</span> <span class="nm">data</span>[<span class="st">'key'</span>]
+
+<span class="cm"># Chained comparisons (unique to Python)</span>
+<span class="kw">if</span> <span class="num-lit">0</span> <span class="op">&lt;=</span> <span class="nm">x</span> <span class="op">&lt;</span> <span class="num-lit">100</span> <span class="kw">and</span> <span class="nm">x</span> <span class="op">!=</span> <span class="num-lit">42</span>:
+    <span class="fn">print</span>(<span class="st">"valid range, not the answer"</span>)
+
+<span class="cm"># Structural Pattern Matching (Python 3.10+) — match/case</span>
+<span class="kw">match</span> <span class="nm">command</span>:
+    <span class="kw">case</span> {<span class="st">"action"</span>: <span class="st">"move"</span>, <span class="st">"direction"</span>: <span class="nm">d</span>}:
+        <span class="fn">move_player</span>(<span class="nm">d</span>)
+    <span class="kw">case</span> {<span class="st">"action"</span>: <span class="st">"attack"</span>, <span class="st">"weapon"</span>: <span class="nm">w</span>} <span class="kw">if</span> <span class="nm">w</span> <span class="kw">in</span> <span class="nm">inventory</span>:
+        <span class="fn">attack_with</span>(<span class="nm">w</span>)
+    <span class="kw">case</span> [<span class="nm">x</span>, <span class="nm">y</span>] <span class="kw">if</span> <span class="fn">isinstance</span>(<span class="nm">x</span>, <span class="fn">int</span>):
+        <span class="fn">print</span>(<span class="st">f"pair: </span>{<span class="nm">x</span>}<span class="st">, </span>{<span class="nm">y</span>}<span class="st">"</span>)
+    <span class="kw">case</span> <span class="nm">_</span>:
+        <span class="fn">raise</span> <span class="bi">ValueError</span>(<span class="st">f"Unknown command: </span>{<span class="nm">command</span>}<span class="st">"</span>)</code></pre>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- 5.8 COMPARING -->
+    <div id="comparing" class="section">
+      <h2><span class="sec-num">5.8</span> Comparing Sequences and Other Types <a class="anchor" href="#comparing">¶</a></h2>
+      <p>Sequences are compared lexicographically: element by element until a difference is found. If one sequence is a prefix of the other, the shorter sequence is "less than". Mixed-type comparisons depend on whether the types define mutual <code>__lt__</code> protocols.</p>
+
+      <table class="cmp-table">
+        <thead>
+          <tr>
+            <th>Type</th>
+            <th>Ordered</th>
+            <th>Hashable</th>
+            <th>Mutable</th>
+            <th>Allows Duplicates</th>
+            <th>Key-Value</th>
+          </tr>
+        </thead>
+        <tbody>
+          <tr>
+            <td><code>list</code></td>
+            <td class="cmp-yes">✓ indexed</td>
+            <td class="cmp-no">✗</td>
+            <td class="cmp-yes">✓</td>
+            <td class="cmp-yes">✓</td>
+            <td class="cmp-no">✗</td>
+          </tr>
+          <tr>
+            <td><code>tuple</code></td>
+            <td class="cmp-yes">✓ indexed</td>
+            <td class="cmp-maybe">if elements are</td>
+            <td class="cmp-no">✗</td>
+            <td class="cmp-yes">✓</td>
+            <td class="cmp-no">✗</td>
+          </tr>
+          <tr>
+            <td><code>set</code></td>
+            <td class="cmp-no">✗</td>
+            <td class="cmp-no">✗</td>
+            <td class="cmp-yes">✓</td>
+            <td class="cmp-no">✗</td>
+            <td class="cmp-no">✗</td>
+          </tr>
+          <tr>
+            <td><code>frozenset</code></td>
+            <td class="cmp-no">✗</td>
+            <td class="cmp-yes">✓</td>
+            <td class="cmp-no">✗</td>
+            <td class="cmp-no">✗</td>
+            <td class="cmp-no">✗</td>
+          </tr>
+          <tr>
+            <td><code>dict</code></td>
+            <td class="cmp-yes">✓ insertion order</td>
+            <td class="cmp-no">✗</td>
+            <td class="cmp-yes">✓</td>
+            <td class="cmp-no">keys unique</td>
+            <td class="cmp-yes">✓</td>
+          </tr>
+          <tr>
+            <td><code>str</code></td>
+            <td class="cmp-yes">✓ lexicographic</td>
+            <td class="cmp-yes">✓</td>
+            <td class="cmp-no">✗</td>
+            <td class="cmp-yes">✓</td>
+            <td class="cmp-no">✗</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- ADVANCED: CPython Internals -->
+    <div id="internals" class="section">
+      <h2><span class="sec-num">⟢</span> CPython Internals: How Structures Are Stored <a class="anchor" href="#internals">¶</a></h2>
+      <p>Understanding how CPython actually stores these objects gives you an intuition for when performance unexpectedly degrades — and how to avoid it.</p>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — Memory Sizes & Object Overhead</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="kw">import</span> <span class="bi">sys</span>
+
+<span class="cm"># Object size overhead (CPython 3.12, 64-bit)</span>
+<span class="fn">print</span>(<span class="bi">sys</span>.<span class="fn">getsizeof</span>([]))        <span class="cm"># 56 bytes (empty list)</span>
+<span class="fn">print</span>(<span class="bi">sys</span>.<span class="fn">getsizeof</span>([<span class="num-lit">1</span>]))       <span class="cm"># 64 bytes (one PyObject pointer = +8)</span>
+<span class="fn">print</span>(<span class="bi">sys</span>.<span class="fn">getsizeof</span>(()))        <span class="cm"># 40 bytes (empty tuple)</span>
+<span class="fn">print</span>(<span class="bi">sys</span>.<span class="fn">getsizeof</span>((<span class="num-lit">1</span>,)))      <span class="cm"># 48 bytes</span>
+<span class="fn">print</span>(<span class="bi">sys</span>.<span class="fn">getsizeof</span>({}))        <span class="cm"># 64 bytes (empty dict)</span>
+<span class="fn">print</span>(<span class="bi">sys</span>.<span class="fn">getsizeof</span>(<span class="fn">set</span>()))      <span class="cm"># 216 bytes (empty set — hash table)</span>
+
+<span class="cm"># Interning: small integers [-5, 256] are cached singletons</span>
+<span class="nm">a</span>, <span class="nm">b</span> <span class="op">=</span> <span class="num-lit">256</span>, <span class="num-lit">256</span>
+<span class="fn">print</span>(<span class="nm">a</span> <span class="kw">is</span> <span class="nm">b</span>)   <span class="cm"># True — same object</span>
+<span class="nm">a</span>, <span class="nm">b</span> <span class="op">=</span> <span class="num-lit">257</span>, <span class="num-lit">257</span>
+<span class="fn">print</span>(<span class="nm">a</span> <span class="kw">is</span> <span class="nm">b</span>)   <span class="cm"># False — different objects (in many contexts)</span>
+
+<span class="cm"># List over-allocation strategy</span>
+<span class="kw">import</span> <span class="bi">ctypes</span>
+<span class="nm">lst</span> <span class="op">=</span> []
+<span class="kw">for</span> <span class="nm">i</span> <span class="kw">in</span> <span class="fn">range</span>(<span class="num-lit">16</span>):
+    <span class="nm">lst</span>.<span class="fn">append</span>(<span class="nm">i</span>)
+    <span class="nm">ob_alloc</span> <span class="op">=</span> <span class="bi">ctypes</span>.<span class="fn">cast</span>(<span class="fn">id</span>(<span class="nm">lst</span>), <span class="bi">ctypes</span>.<span class="fn">POINTER</span>(<span class="bi">ctypes</span>.<span class="fn">c_ssize_t</span>))[<span class="num-lit">5</span>]
+    <span class="fn">print</span>(<span class="st">f'len={<span class="nm">i</span>+1:2d}  allocated={<span class="nm">ob_alloc</span>}'</span>)
+<span class="cm"># len= 1  allocated= 4</span>
+<span class="cm"># len= 5  allocated= 8</span>
+<span class="cm"># len= 9  allocated=16</span>
+<span class="cm"># len=17  allocated=25  ← follows ~1.125x growth</span></code></pre>
+      </div>
+    </div>
+
+    <div class="divider"></div>
+
+    <!-- Design Patterns -->
+    <div id="patterns" class="section">
+      <h2><span class="sec-num">⟢</span> Design Patterns with Built-in Structures <a class="anchor" href="#patterns">¶</a></h2>
+
+      <div class="code-block">
+        <div class="code-header">
+          <div class="code-dots"><div class="code-dot dot-r"></div><div class="code-dot dot-y"></div><div class="code-dot dot-g"></div></div>
+          <span class="code-lang">Python — Practical Patterns</span>
+          <button class="code-copy" onclick="copyCode(this)">copy</button>
+        </div>
+        <pre><code><span class="cm"># Pattern 1: Priority Queue using heapq</span>
+<span class="kw">import</span> <span class="bi">heapq</span>
+
+<span class="nm">pq</span> <span class="op">=</span> []
+<span class="bi">heapq</span>.<span class="fn">heappush</span>(<span class="nm">pq</span>, (<span class="num-lit">3</span>, <span class="st">'low priority'</span>))
+<span class="bi">heapq</span>.<span class="fn">heappush</span>(<span class="nm">pq</span>, (<span class="num-lit">1</span>, <span class="st">'critical'</span>))
+<span class="bi">heapq</span>.<span class="fn">heappush</span>(<span class="nm">pq</span>, (<span class="num-lit">2</span>, <span class="st">'normal'</span>))
+<span class="nm">priority</span>, <span class="nm">task</span> <span class="op">=</span> <span class="bi">heapq</span>.<span class="fn">heappop</span>(<span class="nm">pq</span>)  <span class="cm"># (1, 'critical')</span>
+
+<span class="cm"># Pattern 2: Memoization with dict (manual LRU)</span>
+<span class="nm">_cache</span>: <span class="fn">dict</span>[<span class="fn">int</span>, <span class="fn">int</span>] <span class="op">=</span> {}
+
+<span class="kw">def</span> <span class="fn">fib</span>(<span class="nm">n</span>: <span class="fn">int</span>) <span class="op">-&gt;</span> <span class="fn">int</span>:
+    <span class="kw">if</span> <span class="nm">n</span> <span class="kw">in</span> <span class="nm">_cache</span>: <span class="kw">return</span> <span class="nm">_cache</span>[<span class="nm">n</span>]
+    <span class="nm">_cache</span>[<span class="nm">n</span>] <span class="op">=</span> <span class="nm">n</span> <span class="kw">if</span> <span class="nm">n</span> <span class="op">&lt;</span> <span class="num-lit">2</span> <span class="kw">else</span> <span class="fn">fib</span>(<span class="nm">n</span><span class="op">-</span><span class="num-lit">1</span>) <span class="op">+</span> <span class="fn">fib</span>(<span class="nm">n</span><span class="op">-</span><span class="num-lit">2</span>)
+    <span class="kw">return</span> <span class="nm">_cache</span>[<span class="nm">n</span>]
+
+<span class="cm"># Or use the stdlib decorator — backed by a dict internally</span>
+<span class="kw">from</span> <span class="bi">functools</span> <span class="kw">import</span> <span class="bi">lru_cache</span>
+
+<span class="op">@</span><span class="bi">lru_cache</span>(maxsize<span class="op">=</span><span class="kw">None</span>)
+<span class="kw">def</span> <span class="fn">fib_cached</span>(<span class="nm">n</span>): <span class="kw">return</span> <span class="nm">n</span> <span class="kw">if</span> <span class="nm">n</span> <span class="op">&lt;</span> <span class="num-lit">2</span> <span class="kw">else</span> <span class="fn">fib_cached</span>(<span class="nm">n</span><span class="op">-</span><span class="num-lit">1</span>) <span class="op">+</span> <span class="fn">fib_cached</span>(<span class="nm">n</span><span class="op">-</span><span class="num-lit">2</span>)
+
+<span class="cm"># Pattern 3: Immutable config with dataclasses + frozen=True</span>
+<span class="kw">from</span> <span class="bi">dataclasses</span> <span class="kw">import</span> <span class="bi">dataclass</span>, <span class="bi">field</span>
+
+<span class="op">@</span><span class="bi">dataclass</span>(frozen<span class="op">=</span><span class="kw">True</span>, slots<span class="op">=</span><span class="kw">True</span>)  <span class="cm"># slots=True: 40% less memory</span>
+<span class="kw">class</span> <span class="fn">Config</span>:
+    <span class="nm">host</span>: <span class="fn">str</span>
+    <span class="nm">port</span>: <span class="fn">int</span> <span class="op">=</span> <span class="num-lit">8080</span>
+    <span class="nm">tags</span>: <span class="fn">tuple</span>[<span class="fn">str</span>, ...] <span class="op">=</span> <span class="fn">field</span>(default_factory<span class="op">=</span><span class="fn">tuple</span>)  <span class="cm"># hashable</span></code></pre>
+      </div>
+    </div>
+
+    <div class="footnotes">
+      <h4>Footnotes</h4>
+      <p>[1] Mutable methods returning <code>None</code> is a deliberate Python design convention to signal in-place mutation and prevent accidental chaining (e.g., <code>a.sort().reverse()</code> would raise <code>AttributeError: 'NoneType' object has no attribute 'reverse'</code>).</p>
+      <p>[2] CPython's Timsort was adopted by Java 7, Android, and numerous other runtimes — a testament to its engineering excellence. See Tim Peters' original description in <code>cpython/Objects/listsort.txt</code>.</p>
+      <p>[3] Dictionary ordering as a language guarantee was formalised in PEP 468 (Python 3.7). The compact dict implementation was authored by Raymond Hettinger in Python 3.6.</p>
+    </div>
+
+    <nav class="chapter-nav">
+      <a href="#" class="nav-btn prev">
+        <span class="dir">← Previous</span>
+        <span class="title">4. Control Flow Tools</span>
+      </a>
+      <a href="#" class="nav-btn next">
+        <span class="dir">Next →</span>
+        <span class="title">6. Modules</span>
+      </a>
+    </nav>
+  </main>
+</div>
+
+<script>
+  // Copy button
+  function copyCode(btn) {
+    const pre = btn.closest('.code-block').querySelector('pre');
+    const text = pre.innerText.replace(/^[>\.]{3} /gm, '').replace(/^>>> /gm, '');
+    navigator.clipboard.writeText(text).then(() => {
+      btn.textContent = 'copied!';
+      btn.style.color = 'var(--green)';
+      btn.style.borderColor = 'var(--green)';
+      setTimeout(() => {
+        btn.textContent = 'copy';
+        btn.style.color = '';
+        btn.style.borderColor = '';
+      }, 1500);
+    });
+  }
+
+  // Active sidebar link on scroll
+  const sections = document.querySelectorAll('[id]');
+  const links = document.querySelectorAll('.sidebar-link');
+
+  const obs = new IntersectionObserver((entries) => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        links.forEach(l => l.classList.remove('active'));
+        const active = document.querySelector(`.sidebar-link[href="#${e.target.id}"]`);
+        if (active) active.classList.add('active');
+      }
+    });
+  }, { rootMargin: '-20% 0px -70% 0px' });
+
+  sections.forEach(s => obs.observe(s));
+
+  // Staggered section animations
+  const sectionEls = document.querySelectorAll('.section');
+  const sectionObs = new IntersectionObserver((entries) => {
+    entries.forEach((e, i) => {
+      if (e.isIntersecting) {
+        e.target.style.animationDelay = '0.05s';
+        e.target.style.animationPlayState = 'running';
+        sectionObs.unobserve(e.target);
+      }
+    });
+  }, { threshold: 0.05 });
+
+  sectionEls.forEach(s => {
+    s.style.animationPlayState = 'paused';
+    sectionObs.observe(s);
+  });
+</script>
+
+  <!-- AI CHAT HTML & JS -->
+  <button class="ai-chat-btn" id="aiChatBtn">✨</button>
+  <div class="ai-chat-window" id="aiChatWindow">
+    <div class="chat-header">
+      <span>AI Assistant</span>
+      <button class="chat-close" id="aiChatClose">✕</button>
+    </div>
+    <div class="chat-messages" id="aiChatMessages">
+      <div class="chat-message ai">Hi! I'm your AI learning assistant. Ask me anything about Data Structures!</div>
+    </div>
+    <form class="chat-input-area" id="aiChatForm">
+      <input type="text" class="chat-input" id="aiChatInput" placeholder="Ask a question..." required>
+      <button type="submit" class="chat-send">Send</button>
+    </form>
+  </div>
+
+  <style>
+    /* ─── AI CHATBOX CSS ─── */
+    .ai-chat-btn {
+      position: fixed;
+      bottom: 30px;
+      right: 30px;
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      border-radius: 50%;
+      width: 60px;
+      height: 60px;
+      font-size: 24px;
+      cursor: pointer;
+      box-shadow: 0 4px 15px rgba(0,229,255,0.4);
+      z-index: 1000;
+      transition: transform 0.2s;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+    }
+    .ai-chat-btn:hover { transform: scale(1.1); }
+    
+    .ai-chat-window {
+      position: fixed;
+      bottom: 100px;
+      right: 30px;
+      width: 350px;
+      height: 500px;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 12px;
+      box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+      z-index: 1000;
+      display: flex;
+      flex-direction: column;
+      overflow: hidden;
+      transform: translateY(20px);
+      opacity: 0;
+      pointer-events: none;
+      transition: all 0.3s ease;
+    }
+    .ai-chat-window.open {
+      transform: translateY(0);
+      opacity: 1;
+      pointer-events: all;
+    }
+    .chat-header {
+      background: var(--bg3);
+      padding: 15px;
+      font-family: 'Syne', sans-serif;
+      font-weight: 700;
+      border-bottom: 1px solid var(--border);
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+    }
+    .chat-close {
+      background: transparent;
+      border: none;
+      color: var(--text-dim);
+      cursor: pointer;
+      font-size: 18px;
+    }
+    .chat-close:hover { color: var(--text); }
+    .chat-messages {
+      flex: 1;
+      padding: 15px;
+      overflow-y: auto;
+      display: flex;
+      flex-direction: column;
+      gap: 10px;
+      font-size: 14px;
+      font-family: 'Syne', sans-serif;
+    }
+    .chat-message {
+      padding: 10px 12px;
+      border-radius: 8px;
+      max-width: 85%;
+      line-height: 1.4;
+    }
+    .chat-message.user {
+      background: rgba(0,229,255,0.1);
+      color: var(--text-bright);
+      align-self: flex-end;
+      border-bottom-right-radius: 2px;
+    }
+    .chat-message.ai {
+      background: var(--bg3);
+      color: var(--text);
+      align-self: flex-start;
+      border-bottom-left-radius: 2px;
+    }
+    .chat-input-area {
+      padding: 10px;
+      background: var(--bg3);
+      border-top: 1px solid var(--border);
+      display: flex;
+      gap: 10px;
+    }
+    .chat-input {
+      flex: 1;
+      background: var(--bg);
+      border: 1px solid var(--border);
+      color: var(--text);
+      padding: 8px 12px;
+      border-radius: 6px;
+      font-family: 'Syne', sans-serif;
+    }
+    .chat-input:focus { outline: none; border-color: var(--accent); }
+    .chat-send {
+      background: var(--accent);
+      color: var(--bg);
+      border: none;
+      padding: 0 15px;
+      border-radius: 6px;
+      cursor: pointer;
+      font-weight: 600;
+    }
+    .explain-btn {
+      background: rgba(0,229,255,0.1);
+      color: var(--accent);
+      border: 1px solid rgba(0,229,255,0.3);
+      font-size: 12px;
+      padding: 2px 8px;
+      border-radius: 4px;
+      margin-left: 10px;
+      cursor: pointer;
+      vertical-align: middle;
+      font-family: 'Syne', sans-serif;
+    }
+    .explain-btn:hover {
+      background: rgba(0,229,255,0.2);
+    }
+  </style>
+
+  <script>
+    // AI Chat Logic
+    const aiChatBtn = document.getElementById('aiChatBtn');
+    const aiChatWindow = document.getElementById('aiChatWindow');
+    const aiChatClose = document.getElementById('aiChatClose');
+    const aiChatForm = document.getElementById('aiChatForm');
+    const aiChatInput = document.getElementById('aiChatInput');
+    const aiChatMessages = document.getElementById('aiChatMessages');
+    
+    let aiCurrentContext = "Data Structures concepts";
+
+    aiChatBtn.addEventListener('click', () => {
+      aiChatWindow.classList.add('open');
+      aiChatInput.focus();
+    });
+
+    aiChatClose.addEventListener('click', () => {
+      aiChatWindow.classList.remove('open');
+    });
+
+    function aiAppendMessage(text, sender) {
+      const msgDiv = document.createElement('div');
+      msgDiv.className = `chat-message ${sender}`;
+      msgDiv.innerHTML = text.replace(/\n/g, '<br>');
+      aiChatMessages.appendChild(msgDiv);
+      aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+    }
+
+    async function sendAiChatMessage(prompt, context) {
+      aiAppendMessage(prompt, 'user');
+      const tempId = Date.now();
+      const loadingDiv = document.createElement('div');
+      loadingDiv.className = 'chat-message ai';
+      loadingDiv.id = `loading-${tempId}`;
+      loadingDiv.innerText = 'Thinking...';
+      aiChatMessages.appendChild(loadingDiv);
+      aiChatMessages.scrollTop = aiChatMessages.scrollHeight;
+
+      try {
+        const response = await fetch('http://localhost:5000/api/chat', {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ prompt, context })
+        });
+        const data = await response.json();
+        const loadingEl = document.getElementById(`loading-${tempId}`);
+        if(loadingEl) loadingEl.remove();
+        
+        if (response.ok && data.success) {
+          aiAppendMessage(data.response, 'ai');
+        } else {
+          aiAppendMessage("Sorry, I encountered an error: " + (data.message || "Unknown error"), 'ai');
+        }
+      } catch (e) {
+        const loadingEl = document.getElementById(`loading-${tempId}`);
+        if(loadingEl) loadingEl.remove();
+        aiAppendMessage("Failed to connect to AI server.", 'ai');
+      }
+    }
+
+    aiChatForm.addEventListener('submit', (e) => {
+      e.preventDefault();
+      const prompt = aiChatInput.value.trim();
+      if (!prompt) return;
+      aiChatInput.value = '';
+      sendAiChatMessage(prompt, aiCurrentContext);
+    });
+
+    // Add Explain buttons to h2 headers
+    document.querySelectorAll('.section h2').forEach(h2 => {
+      const btn = document.createElement('button');
+      btn.className = 'explain-btn';
+      btn.innerText = '✨ Explain';
+      btn.onclick = (event) => {
+        event.preventDefault();
+        const concept = h2.innerText.replace('✨ Explain', '').replace('¶', '').trim();
+        aiCurrentContext = `The user is reading about ${concept} in Data Structures.`;
+        aiChatWindow.classList.add('open');
+        sendAiChatMessage(`Can you explain ${concept} in simple terms?`, aiCurrentContext);
+      };
+      h2.appendChild(btn);
+    });
+
+    // Auth Check
+    document.addEventListener("DOMContentLoaded", () => {
+      const userStr = localStorage.getItem('syntaxSphereUser');
+      if (!userStr) {
+        window.location.href = 'login.html';
+        return;
+      }
+      
+      try {
+        const user = JSON.parse(userStr);
+        const name = user.username || 'Developer';
+        const init = name.slice(0, 2).toUpperCase();
+        
+        document.getElementById('userProfile').style.display = 'flex';
+        document.getElementById('versionBadge').style.display = 'none';
+        document.getElementById('userNameDisplay').textContent = name;
+        document.getElementById('userAvatar').textContent = init;
+      } catch (e) {
+        console.error("Error parsing user data", e);
+      }
+    });
+
+    function logout() {
+      localStorage.removeItem('syntaxSphereUser');
+      window.location.href = 'syntax-sphere.html';
+    }
+  </script>
+</body>
+</html>
