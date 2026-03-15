@@ -1,4 +1,4 @@
-from flask import Flask, request, jsonify, render_template
+from flask import Flask, request, jsonify
 from flask_cors import CORS
 import sqlite3
 import os
@@ -13,7 +13,7 @@ GENAI_API_KEY = os.environ.get("GENAI_API_KEY")
 if GENAI_API_KEY:
     genai.configure(api_key=GENAI_API_KEY)
 
-DB_PATH = 'users.db'
+DB_PATH = os.path.join(os.environ.get('DB_DIR', ''), 'users.db')
 
 def init_db():
     conn = sqlite3.connect(DB_PATH)
@@ -32,23 +32,7 @@ init_db()
 
 @app.route('/')
 def home():
-    return render_template("syntax-sphere.html")
-
-@app.route('/login')
-def login_page():
-    return render_template("login.html")
-
-@app.route('/app')
-def app_page():
-    return render_template("syntaxsphere-app.html")
-
-@app.route('/data-structures')
-def data_structures():
-    return render_template("data_structures.html")
-
-@app.route('/companies')
-def companies():
-    return render_template("syntax-sphere-companies.html")
+    return jsonify({"message": "Backend is running!"})
 
 @app.route('/auth/signup', methods=['POST'])
 def signup():
