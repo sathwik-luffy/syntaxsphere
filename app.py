@@ -1,11 +1,10 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, render_template
 from flask_cors import CORS
 import sqlite3
 import os
 import google.generativeai as genai
 
 app = Flask(__name__)
-# Enable CORS so the local HTML files can make fetch requests to this backend without issue
 CORS(app)
 
 # Configure Gemini API
@@ -32,7 +31,23 @@ init_db()
 
 @app.route('/')
 def home():
-    return jsonify({"message": "Backend is running!"})
+    return render_template("syntax-sphere.html")
+
+@app.route('/login')
+def login_page():
+    return render_template("login.html")
+
+@app.route('/app')
+def app_page():
+    return render_template("syntaxsphere-app.html")
+
+@app.route('/data-structures')
+def data_structures():
+    return render_template("data_structures.html")
+
+@app.route('/companies')
+def companies():
+    return render_template("syntax-sphere-companies.html")
 
 @app.route('/auth/signup', methods=['POST'])
 def signup():
@@ -71,7 +86,6 @@ def login():
     conn.close()
     
     if user:
-        # user tuple: (id, email, password)
         username = email.split('@')[0]
         return jsonify({
             "message": "Login successful", 
